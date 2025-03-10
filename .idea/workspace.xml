@@ -5,13 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="675fe126-bdbb-4d78-b07c-dcbdd927e414" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/Tubess-1-IF3270-PembelajaranMesin.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/simple.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/Tubess-1-IF3270-PembelajaranMesin.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Tubess-1-IF3270-PembelajaranMesin.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/simple.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/simple.ipynb" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -33,15 +30,17 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
     "git-widget-placeholder": "master",
     "ignore.virus.scanning.warn.message": "true",
+    "last_opened_file_path": "/Users/mfauzanazhim/Documents/GitHub/Tubess-1-IF3270-PembelajaranMesin",
     "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
   }
 }]]></component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-python-sdk-80a6976e5986-7ba1f540c4e9-com.jetbrains.pycharm.ds.sharedIndexes.bundled-DS-242.22855.78" />
+        <option value="bundled-python-sdk-a8e928d85084-fab4200a9dfa-com.jetbrains.pycharm.ds.sharedIndexes.bundled-DS-243.22562.236" />
       </set>
     </attachedChunks>
   </component>
