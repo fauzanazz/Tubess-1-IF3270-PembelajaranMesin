@@ -59,3 +59,10 @@ class ArtificialNeuralNetwork:
                 iter += 1
             if verbose:
                 print(f"Epoch {epoch} - Loss: {loss}")
+
+    def test(self, x, y, loss_func):
+        loss = 0
+        for x_input, y_input in zip(x, y):
+            y_pred = self.forward(x_input)
+            loss += loss_func(y_pred, y_input)
+        print(f"Loss: {loss}")
