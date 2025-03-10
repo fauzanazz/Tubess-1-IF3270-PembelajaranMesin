@@ -5,21 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="675fe126-bdbb-4d78-b07c-dcbdd927e414" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/ArtificialNeuralNetwork.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Function/ActivationFunction.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Function/Initializer.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Function/LossFunction.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Function/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Layer/InputLayer.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Layer/Layer.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Layer/OutputLayer.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Layer/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Neuron/Neuron.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Neuron/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Utils.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/enums/InitializerType.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/enums/__init__.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Layer/OutputLayer.py" beforeDir="false" afterPath="$PROJECT_DIR$/Layer/OutputLayer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Neuron/Neuron.py" beforeDir="false" afterPath="$PROJECT_DIR$/Neuron/Neuron.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/simple.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/simple.ipynb" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

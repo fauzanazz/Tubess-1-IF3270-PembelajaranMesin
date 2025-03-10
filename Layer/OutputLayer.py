@@ -27,5 +27,5 @@ class OutputLayer(Layer):
             self.error_node[i] = error_node
             neuron.error_node = error_node
             self.neurons[i].cost_weight += -lr * error_node * self.output[i]
-            self.neurons[i].cost_bias += -lr * error_node
+            self.neurons[i].cost_bias += -lr * error_node * self.neurons[i].bias
 
