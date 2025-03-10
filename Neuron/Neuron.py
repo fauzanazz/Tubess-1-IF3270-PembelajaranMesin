@@ -19,9 +19,9 @@ class Neuron:
         return torch.sum(x * self.weights) + self.bias
 
     def weight_update(self):
-        self.weights += self.cost_weight
+        self.weights = torch.add(self.weights, self.cost_weight)
         self.cost_weight = torch.zeros_like(self.cost_weight)
 
     def bias_update(self):
-        self.bias += self.cost_bias
+        self.bias = torch.add(self.bias, self.cost_bias)
         self.cost_bias = torch.zeros(1)
