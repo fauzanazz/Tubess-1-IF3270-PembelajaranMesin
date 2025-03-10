@@ -51,11 +51,11 @@ class ArtificialNeuralNetwork:
             iter = 1
             for x_input, y_input in zip(x, y):
                 y_pred = self.forward(x_input)
-                loss = loss_func(y_pred, y_input)
+                loss += loss_func(y_pred, y_input)
                 self.target_min_output = Utils.output_minus_target(y_pred, y_input)
                 self.backward(lr, y_input)
                 if iter % 1000 == 0 and verbose:
-                    print(f"Iter {iter} - Loss: {loss}")
+                    print(f"Iter {iter} - Loss: {loss/iter}")
                 iter += 1
             if verbose:
                 print(f"Epoch {epoch} - Loss: {loss}")
@@ -65,4 +65,4 @@ class ArtificialNeuralNetwork:
         for x_input, y_input in zip(x, y):
             y_pred = self.forward(x_input)
             loss += loss_func(y_pred, y_input)
-        print(f"Loss: {loss}")
+        print(f"Loss: {loss/len(x)}")
