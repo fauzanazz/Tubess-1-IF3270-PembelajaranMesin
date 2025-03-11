@@ -1,6 +1,6 @@
-from Layer import Layer, InputLayer, OutputLayer
+from Layer import InputLayer, OutputLayer
 import torch
-from Function import ActivationFunction, LossFunction
+from Function import LossFunction
 from Utils import Utils
 
 class ArtificialNeuralNetwork:
@@ -9,15 +9,8 @@ class ArtificialNeuralNetwork:
 
     Consist of many layers of Type Layer.
     """
-    def __init__(self, input_size, output_size, hidden_layers, hidden_size, weight_init, bias_init, param_1, param_2, seeds = 0, activation = ActivationFunction.linear, loss_func = LossFunction.mean_squared_error):
-        self.layers = []
-        self.layers.append(InputLayer(input_size, "Input Layer"))
-        for i in range(hidden_layers):
-            if i == 0:
-                self.layers.append(Layer(weight_init, bias_init, input_size, hidden_size, param_1, param_2, activation, f"Hidden Layer {i}"))
-            else:
-                self.layers.append(Layer(weight_init, bias_init, hidden_size, hidden_size, param_1, param_2, activation, f"Hidden Layer {i}"))
-        self.layers.append(OutputLayer(weight_init, bias_init, hidden_size, output_size, param_1, param_2, activation, "Output Layer"))
+    def __init__(self, seeds = 0, loss_func = LossFunction.mean_squared_error, *layers):
+        self.layers = layers
         self.loss_func = loss_func
         torch.manual_seed(seeds)
         self.target = None
@@ -41,28 +34,27 @@ class ArtificialNeuralNetwork:
                 if isinstance(layer, OutputLayer):
                     layer.backward(lr, target)
                 else:
-                    layer.backward(lr, self.layers[index])
+                    layer.backward(lr, self.layers[index+1])
             index -= 1
 
 
     def train(self, x, y, lr, epochs, loss_func, verbose = False):
+        iter = 1
         for epoch in range(epochs):
             loss = 0
-            iter = 1
             for x_input, y_input in zip(x, y):
                 y_pred = self.forward(x_input)
                 loss += loss_func(y_pred, y_input)
                 self.target_min_output = Utils.output_minus_target(y_pred, y_input)
                 self.backward(lr, y_input)
-                if iter % 1000 == 0 and verbose:
-                    print(f"Iter {iter} - Loss: {loss/iter}")
                 iter += 1
             if verbose:
-                print(f"Epoch {epoch} - Loss: {loss}")
+                print(f"Epoch {epoch} - Loss: {loss/iter}")
 
     def test(self, x, y, loss_func):
         loss = 0
         for x_input, y_input in zip(x, y):
             y_pred = self.forward(x_input)
+            print(f"Prediction: {torch.argmax(y_pred)} - Target: {y_input}")
             loss += loss_func(y_pred, y_input)
         print(f"Loss: {loss/len(x)}")
