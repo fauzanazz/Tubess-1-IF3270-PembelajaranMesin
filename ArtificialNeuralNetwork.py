@@ -1,7 +1,4 @@
-import time
-
 import torch
-from Function import LossFunction
 
 class ArtificialNeuralNetwork:
     """

@@ -4,42 +4,51 @@ class LossFunction:
     """
     LossFunction Class.
 
-    This class defines loss functions and their derivatives.
+    This class defines loss functions and their derivatives with improved numerical stability.
     """
 
     @staticmethod
     @torch.compile
     def mean_squared_error(y_pred, y_true, epsilon=1e-7):
         y_pred = torch.clamp(y_pred, epsilon, 1.0 - epsilon)
+        y_true = torch.clamp(y_true, epsilon, 1.0 - epsilon)
         return torch.mean((y_pred - y_true) ** 2)
 
     @staticmethod
     def mean_squared_error_derivative(y_pred, y_true, epsilon=1e-7):
         y_pred = torch.clamp(y_pred, epsilon, 1.0 - epsilon)
-        return 2 * (y_pred - y_true) / y_true.size(0)
+        y_true = torch.clamp(y_true, epsilon, 1.0 - epsilon)
+        derivative = 2 * (y_pred - y_true) / y_true.size(0)
+        return torch.nan_to_num(derivative, nan=0.0, posinf=1e7, neginf=-1e7)
 
     @staticmethod
     @torch.compile
     def binary_cross_entropy(y_pred, y_true, epsilon=1e-7):
         y_pred = torch.clamp(y_pred, epsilon, 1.0 - epsilon)
-        return -(y_pred.log()*y_true + (1-y_true)*(1-y_pred).log()).mean()
+        y_true = torch.clamp(y_true, epsilon, 1.0 - epsilon)
+        return -(y_true * torch.log(y_pred) + (1 - y_true) * torch.log1p(-y_pred)).mean()
 
     @staticmethod
     def binary_cross_entropy_derivative(y_pred, y_true, epsilon=1e-7):
         y_pred = torch.clamp(y_pred, epsilon, 1.0 - epsilon)
-        return ((y_pred - y_true) / (y_pred * (1 - y_pred))) / y_true.size(0)
+        y_true = torch.clamp(y_true, epsilon, 1.0 - epsilon)
+        derivative = ((y_pred - y_true) / (y_pred * (1 - y_pred))) / y_true.size(0)
+        return torch.nan_to_num(derivative, nan=0.0, posinf=1e7, neginf=-1e7)
 
     @staticmethod
     @torch.compile
     def categorical_cross_entropy(y_true, y_pred, epsilon=1e-7):
-        y_pred = torch.clamp(y_pred, epsilon, 1. - epsilon)
-        return (-torch.sum(y_true * torch.log(y_pred)).mean())/2
-
+        y_pred = torch.clamp(y_pred, epsilon, 1.0 - epsilon)
+        y_true = torch.clamp(y_true, epsilon, 1.0 - epsilon)
+        return -torch.sum(y_true * torch.log(y_pred)).mean()
 
     @staticmethod
     def categorical_cross_entropy_derivative(y_pred, y_true, epsilon=1e-7):
-        y_pred = torch.clamp(y_pred, epsilon, 1.0)
-        return -(y_true / y_pred) / y_true.size(0)
+        y_pred = torch.clamp(y_pred, epsilon, 1.0 - epsilon)
+        y_true = torch.clamp(y_true, epsilon, 1.0 - epsilon)
+        derivative = -(y_true / y_pred) / y_true.size(0)
+        return torch.nan_to_num(derivative, nan=0.0, posinf=1e7, neginf=-1e7)
+
 
 
 if __name__ == "__main__":
