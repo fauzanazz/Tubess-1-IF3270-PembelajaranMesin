@@ -1,5 +1,5 @@
+from Function import Initializer
 from enums import InitializerType
-from Neuron import Neuron
 from Function.ActivationFunction import ActivationFunction
 import torch
 
@@ -10,14 +10,30 @@ class Layer:
     Consist of many neurons of Type Layer.
     """
 
-    def __init__(self, weight_init : InitializerType, bias_init : InitializerType, input_size, output_size, param_1, param_2, activation = ActivationFunction.linear, layer_name = None):
+    def __init__(self, weight_init : InitializerType, bias_init : InitializerType, param_1, param_2, num_neurons, input_size, activation = ActivationFunction.linear, layer_name = None):
         self.layer_name = layer_name
-        self.neurons = [Neuron(weight_init, bias_init, input_size, param_1, param_2) for _ in range(output_size)]
         self.activation_func = activation
+        self.derivative_activation = None
         self.sum = None
         self.output = None
-        self.derivative_activation = None
-        self.error_node = None
+
+        # Initialize Neurons
+        self.weights = Initializer.init_weights(
+            weight_init=weight_init,
+            param_1=param_1,
+            param_2=param_2,
+            input_size=input_size,
+            num_neurons=num_neurons
+        )
+        self.biases = Initializer.init_bias(
+            bias_init=bias_init,
+            param_1=param_1,
+            param_2=param_2,
+            num_neurons=num_neurons
+        )
+        self.weights = torch.randn(num_neurons, input_size) * torch.sqrt(torch.tensor(2.0 / input_size))
+        self.biases = torch.zeros(num_neurons)
+        self.last_input = None
 
         match activation:
             case ActivationFunction.linear:
@@ -32,31 +48,23 @@ class Layer:
                 self.derivative_activation = ActivationFunction.derivative_softmax
 
     def forward(self, x):
-        self.sum = torch.stack([neuron.forward(x) for neuron in self.neurons])
+        self.last_input = x
+        self.sum = torch.matmul(x, self.weights.T) + self.biases
         self.output = self.activation_func(self.sum)
         return self.output
 
-    def backward(self, lr, prev_layer):
-        # Iterate through all neurons
-        self.error_node = torch.zeros_like(self.output)
-        for i, neuron in enumerate(self.neurons):
-            # Calculate error node
-            sum_of_weight = torch.sum(neuron.weights * prev_layer.error_node)
-            error_node = self.output[i] * (1 - self.output[i]) * sum_of_weight
-            neuron.error_node = error_node
-            self.error_node[i] = error_node
-            # Calculate cost weight
-            self.neurons[i].cost_weight += -lr * error_node * self.output[i]
-            # Calculate cost bias
-            self.neurons[i].cost_bias += -lr * error_node * self.neurons[i].bias
+    def backward(self, lr, delta_next):
+        local_grad = self.derivative_activation(self.sum)
+        delta = local_grad * delta_next
 
-    def update_weight(self):
-        for neuron in self.neurons:
-            neuron.weight_update()
+        grad_w = torch.matmul(delta.T, self.last_input) / self.last_input.size(0)
+        grad_b = delta.mean(dim=0)
 
-    def update_bias(self):
-        for neuron in self.neurons:
-            neuron.bias_update()
+        self.weights -= lr * grad_w
+        self.biases -= lr * grad_b
+
+        delta_prev = torch.matmul(delta, self.weights)
+        return delta_prev
 
     def __str__(self):
-        return f"Layer Name: {self.layer_name}\nNeurons: {len(self.neurons)}\n"
+        return f"Layer Name: {self.layer_name}"

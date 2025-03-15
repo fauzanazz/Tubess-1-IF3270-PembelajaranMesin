@@ -2,7 +2,6 @@ from Layer import Layer
 from enums import InitializerType
 from Function.ActivationFunction import ActivationFunction
 import torch
-from Utils import Utils
 
 class OutputLayer(Layer):
     """
@@ -10,22 +9,28 @@ class OutputLayer(Layer):
 
     Consist of many neurons of Output Layer
     """
-    def __init__(self, weight_init : InitializerType, bias_init : InitializerType, input_size, output_size, param_1, param_2, activation = ActivationFunction.linear, layer_name = None):
-        super().__init__(weight_init, bias_init, input_size, output_size, param_1, param_2, activation, layer_name)
+    def __init__(self, weight_init : InitializerType, bias_init : InitializerType, input_size, num_neurons, param_1, param_2, activation = ActivationFunction.linear, layer_name = None):
+        super().__init__(
+            weight_init=weight_init,
+            bias_init=bias_init,
+            input_size=input_size,
+            num_neurons=num_neurons,
+            param_1=param_1,
+            param_2=param_2,
+            activation=activation,
+            layer_name=layer_name
+        )
+        self.num_neurons = num_neurons
 
-    def forward(self, x):
-        self.sum = torch.stack([neuron.forward(x) for neuron in self.neurons])
-        self.output = ActivationFunction.sigmoid(self.sum)
-        return self.output
+    def backward(self, lr, target):
+        delta = self.output - target
 
-    def backward(self, lr, target = None, layer = None):
-        self.error_node = torch.zeros_like(self.output)
-        target_min_output = Utils.output_minus_target(self.output, target)
-        for i, neuron in enumerate(self.neurons):
-            target_delta = target_min_output[i]
-            error_node = self.output[i] * (1 - self.output[i]) * target_delta
-            self.error_node[i] = error_node
-            neuron.error_node = error_node
-            self.neurons[i].cost_weight += -lr * error_node * self.output[i]
-            self.neurons[i].cost_bias += -lr * error_node * self.neurons[i].bias
+        grad_w = torch.matmul(delta.T, self.last_input) / self.last_input.size(0)
+        grad_b = delta.mean(dim=0)
+
+        self.weights -= lr * grad_w
+        self.biases -= lr * grad_b
+
+        delta_prev = torch.matmul(delta, self.weights)
+        return delta_prev
 
