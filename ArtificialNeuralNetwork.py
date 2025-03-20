@@ -1,13 +1,9 @@
-import torch
+import numpy as np
+import time
 
 class ArtificialNeuralNetwork:
-    """
-    ArtificialNeuralNetwork Class.
-
-    Consist of many layers of Type Layer.
-    """
-    def __init__(self, seeds = 0, *layers):
-        torch.manual_seed(seeds)
+    def __init__(self, seeds=0, *layers):
+        np.random.seed(seeds)
         self.layers = layers
 
     def forward(self, x):
@@ -16,34 +12,54 @@ class ArtificialNeuralNetwork:
         return x
 
     def backward(self, lr, target):
-        # Backpropagate starting from the output layer.
         delta = self.layers[-1].backward(lr, target)
         for layer in reversed(self.layers[:-1]):
             delta = layer.backward(lr, delta)
 
+    def train(self, data_loader, loss_function, lr, epochs, verbose=-1):
+        training_time = 0
+        epoch_times = []
+        epoch_losses = []
 
-    def train(self, data_loader, loss_function, lr, epochs):
         for epoch in range(epochs):
+            start_time = time.time()
             total_loss = 0.0
             count = 0
-            for x, y in data_loader:
-                x = x.view(x.size(0), -1)
-                y_onehot = torch.zeros(x.size(0), self.layers[-1].num_neurons)
-                y_onehot.scatter_(1, y.view(-1, 1), 1)
+
+            for x, y in data_loader():
+                y_onehot = np.zeros((x.shape[0], self.layers[-1].num_neurons))
+                y_onehot[np.arange(x.shape[0]), y] = 1
+
                 output = self.forward(x)
                 loss = loss_function(y_onehot, output)
-                total_loss += loss.item()
+                total_loss += loss
                 count += 1
                 self.backward(lr, y_onehot)
-            print(f"Epoch {epoch + 1}: Loss = {total_loss / count:.4f}")
+
+            epoch_time = time.time() - start_time
+            training_time += epoch_time
+            epoch_times.append(epoch_time)
+            avg_loss = total_loss / count
+            epoch_losses.append(avg_loss)
+
+            if verbose > 0 and (epoch + 1) % verbose == 0:
+                print(f"Epoch {epoch + 1}: Loss = {avg_loss:.4f}, Time = {epoch_time:.2f}s")
+
+        print(f"Total training time: {training_time:.2f}s")
+        return
 
     def test(self, data_loader):
         correct = 0
         total = 0
-        for x, y in data_loader:
-            x = x.view(x.size(0), -1)
+        start_time = time.time()
+
+        for x, y in data_loader():
             output = self.forward(x)
-            pred = torch.argmax(output, dim=1)
-            total += y.size(0)
-            correct += (pred == y).sum().item()
-        print(f"Test Accuracy: {100 * correct / total:.2f}%")
+            pred = np.argmax(output, axis=1)
+
+            total += y.shape[0]
+            correct += np.sum(pred == y)
+
+        test_time = time.time() - start_time
+        accuracy = 100 * correct / total
+        print(f"Test Accuracy: {accuracy:.2f}%, Time: {test_time:.2f}s")

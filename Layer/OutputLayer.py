@@ -1,15 +1,12 @@
 from Layer import Layer
 from enums import InitializerType
 from Function.ActivationFunction import ActivationFunction
-import torch
+import numpy as np
 
 class OutputLayer(Layer):
-    """
-    OutputLayer Class.
-
-    Consist of many neurons of Output Layer
-    """
-    def __init__(self, weight_init : InitializerType, bias_init : InitializerType, input_size, num_neurons, param_1, param_2, activation = ActivationFunction.linear, layer_name = None):
+    def __init__(self, weight_init: InitializerType, bias_init: InitializerType, 
+                input_size, num_neurons, param_1, param_2, 
+                activation=ActivationFunction.linear, layer_name=None):
         super().__init__(
             weight_init=weight_init,
             bias_init=bias_init,
@@ -25,12 +22,12 @@ class OutputLayer(Layer):
     def backward(self, lr, target):
         delta = self.output - target
 
-        grad_w = torch.matmul(delta.T, self.last_input) / self.last_input.size(0)
-        grad_b = delta.mean(dim=0)
+        grad_w = np.dot(delta.T, self.last_input) / self.last_input.shape[0]
+        grad_b = np.mean(delta, axis=0)
 
         self.weights -= lr * grad_w
         self.biases -= lr * grad_b
 
-        delta_prev = torch.matmul(delta, self.weights)
+        delta_prev = np.dot(delta, self.weights)
         return delta_prev
 

@@ -1,123 +1,193 @@
+import numpy as np
 import torch
-import torch.nn.functional as F
+
 class ActivationFunction:
-    """
-    ActivationFunction Class.
-
-    This class is used to define the activation function.
-    """
-
     @staticmethod
     def linear(x):
         return x
 
     @staticmethod
-    @torch.compile
     def relu(x):
-        return torch.relu(x)
+        return np.maximum(0, x)
 
     @staticmethod
-    @torch.compile
     def sigmoid(x):
-        return torch.sigmoid(x)
+        return 1 / (1 + np.exp(-np.clip(x, -30, 30)))
 
     @staticmethod
-    @torch.compile
     def tanh(x):
-        return torch.tanh(x)
+        return np.tanh(x)
 
     @staticmethod
-    @torch.compile
     def softmax(x):
-        x = x - torch.max(x)
-        return torch.softmax(x, dim=0)
+        # Shift for numerical stability
+        x = x - np.max(x, axis=1, keepdims=True)
+        exp_x = np.exp(x)
+        return exp_x / np.sum(exp_x, axis=1, keepdims=True)
 
     @staticmethod
     def derivative_linear(x):
-        return torch.ones_like(x)
+        return np.ones_like(x)
 
     @staticmethod
-    @torch.compile
     def derivative_relu(x):
-        return (x > 0).float()
+        return (x > 0).astype(float)
 
     @staticmethod
-    @torch.compile
     def derivative_sigmoid(x):
-        sig = torch.sigmoid(x)
+        sig = ActivationFunction.sigmoid(x)
         return sig * (1 - sig)
 
     @staticmethod
-    @torch.compile
     def derivative_tanh(x):
-        return 1 - torch.tanh(x) ** 2
+        return 1 - np.tanh(x) ** 2
 
     @staticmethod
-    @torch.compile
     def derivative_softmax(x):
-        def softmax(z):
-            return torch.exp(z) / torch.sum(torch.exp(z), dim=-1, keepdim=True)
-        sm = softmax(x).unsqueeze(-1)  # Shape: [N, 1]
-        jacobian = torch.diag_embed(sm.squeeze(-1)) - torch.matmul(sm, sm.transpose(-1, -2))
-        return jacobian
+        s = np.exp(x - np.max(x, axis=-1, keepdims=True))
+        s = s / np.sum(s, axis=-1, keepdims=True)
+        
+        if len(x.shape) == 1:
+            n = x.shape[0]
+            jacobian = np.zeros((n, n))
+            
+            for i in range(n):
+                for j in range(n):
+                    if i == j:
+                        jacobian[i, j] = s[i] * (1 - s[i])
+                    else:
+                        jacobian[i, j] = -s[i] * s[j]
+            return jacobian
+        else:
+            batch_size, n = x.shape
+            jacobian = np.zeros((batch_size, n, n))
+            
+            for b in range(batch_size):
+                for i in range(n):
+                    for j in range(n):
+                        if i == j:
+                            jacobian[b, i, j] = s[b, i] * (1 - s[b, i])
+                        else:
+                            jacobian[b, i, j] = -s[b, i] * s[b, j]
+            return jacobian
 
 if __name__ == "__main__":
-    x = torch.tensor([1.0, 2.0, 3.0, 4.0, 5.0])
-    x_softmax = torch.tensor([[4., 2.]], requires_grad=True)
-
-    print("Linear")
-    print(ActivationFunction.linear(x))
-    print(x)
-
-    print("ReLU")
-    print(ActivationFunction.relu(x))
-    print(torch.nn.functional.relu(x))
-
-    print("Sigmoid")
-    print(ActivationFunction.sigmoid(x))
-    print(torch.nn.functional.sigmoid(x))
-
-    print("Tanh")
-    print(ActivationFunction.tanh(x))
-    print(torch.nn.functional.tanh(x))
-
-    print("Softmax")
-    print(ActivationFunction.softmax(x))
-    print(torch.nn.functional.softmax(x, dim=0))
-
-    print("Derivative Linear")
-    print(ActivationFunction.derivative_linear(x))
-    print(torch.ones_like(x))
-
-    print("Derivative ReLU")
-    print(ActivationFunction.derivative_relu(x))
-    t = x.clone().detach().requires_grad_(True)
-    t.relu().sum().backward()
-    print(t.grad)
-
-    print("Derivative Sigmoid")
-    print(ActivationFunction.derivative_sigmoid(x))
-    t = x.clone().detach().requires_grad_(True)
-    t.sigmoid().sum().backward()
-    print(t.grad)
-
-    print("Derivative Tanh")
-    print(ActivationFunction.derivative_tanh(x))
-    t = x.clone().detach().requires_grad_(True)
-    t.tanh().sum().backward()
-    print(t.grad)
-
-    print("Derivative Softmax")
-    print(ActivationFunction.derivative_softmax(x_softmax))
-    torch_sm = F.softmax(x_softmax, dim=1)
-    # to extract the first row in the jacobian matrix, use [[1., 0]]
-    # retain_graph=True because we re-use backward() for the second row
-    torch_sm.backward(torch.tensor([[1.,0.]]), retain_graph=True)
-    r1 = x_softmax.grad
-    x_softmax.grad = torch.zeros_like(x_softmax)
-    # to extract the second row in the jacobian matrix, use [[0., 1.]]
-    torch_sm.backward(torch.tensor([[0.,1.]]))
-    r2 = x_softmax.grad
-    torch_sm_p = torch.cat((r1,r2))
-    print(torch_sm_p)
-
+    print("Comparing NumPy and PyTorch Activation Functions")
+    print("=" * 50)
+    
+    # Test data
+    x_np = np.linspace(-5, 5, 10).astype(np.float32)
+    x_torch = torch.tensor(x_np, requires_grad=True)
+    
+    # 2D test data for softmax
+    x_2d_np = np.array([
+        [-2.0, 1.0, 3.0],
+        [0.5, 1.5, -1.0],
+        [3.0, -2.0, 0.5]
+    ], dtype=np.float32)
+    x_2d_torch = torch.tensor(x_2d_np, requires_grad=True)
+    
+    # 1. ReLU Comparison
+    print("\nReLU Function:")
+    # NumPy output
+    relu_np = ActivationFunction.relu(x_np)
+    relu_deriv_np = ActivationFunction.derivative_relu(x_np)
+    
+    # PyTorch output
+    relu_torch = torch.relu(x_torch)
+    # PyTorch derivative using autograd
+    relu_torch.sum().backward()
+    relu_deriv_torch = x_torch.grad.numpy()
+    x_torch.grad.zero_()
+    
+    print(f"Input: {x_np}")
+    print(f"NumPy ReLU:          {relu_np}")
+    print(f"PyTorch ReLU:        {relu_torch.detach().numpy()}")
+    print(f"NumPy Derivative:    {relu_deriv_np}")
+    print(f"PyTorch Derivative:  {relu_deriv_torch}")
+    print(f"Max Difference:      {np.max(np.abs(relu_np - relu_torch.detach().numpy()))}")
+    print(f"Max Deriv Diff:      {np.max(np.abs(relu_deriv_np - relu_deriv_torch))}")
+    
+    # 2. Sigmoid Comparison
+    print("\nSigmoid Function:")
+    # NumPy output
+    sigmoid_np = ActivationFunction.sigmoid(x_np)
+    sigmoid_deriv_np = ActivationFunction.derivative_sigmoid(x_np)
+    
+    # PyTorch output
+    sigmoid_torch = torch.sigmoid(x_torch)
+    # PyTorch derivative using autograd
+    sigmoid_torch.sum().backward()
+    sigmoid_deriv_torch = x_torch.grad.numpy()
+    x_torch.grad.zero_()
+    
+    print(f"Input: {x_np}")
+    print(f"NumPy Sigmoid:       {sigmoid_np}")
+    print(f"PyTorch Sigmoid:     {sigmoid_torch.detach().numpy()}")
+    print(f"NumPy Derivative:    {sigmoid_deriv_np}")
+    print(f"PyTorch Derivative:  {sigmoid_deriv_torch}")
+    print(f"Max Difference:      {np.max(np.abs(sigmoid_np - sigmoid_torch.detach().numpy()))}")
+    print(f"Max Deriv Diff:      {np.max(np.abs(sigmoid_deriv_np - sigmoid_deriv_torch))}")
+    
+    # 3. Tanh Comparison
+    print("\nTanh Function:")
+    # NumPy output
+    tanh_np = ActivationFunction.tanh(x_np)
+    tanh_deriv_np = ActivationFunction.derivative_tanh(x_np)
+    
+    # PyTorch output
+    tanh_torch = torch.tanh(x_torch)
+    # PyTorch derivative using autograd
+    tanh_torch.sum().backward()
+    tanh_deriv_torch = x_torch.grad.numpy()
+    x_torch.grad.zero_()
+    
+    print(f"Input: {x_np}")
+    print(f"NumPy Tanh:          {tanh_np}")
+    print(f"PyTorch Tanh:        {tanh_torch.detach().numpy()}")
+    print(f"NumPy Derivative:    {tanh_deriv_np}")
+    print(f"PyTorch Derivative:  {tanh_deriv_torch}")
+    print(f"Max Difference:      {np.max(np.abs(tanh_np - tanh_torch.detach().numpy()))}")
+    print(f"Max Deriv Diff:      {np.max(np.abs(tanh_deriv_np - tanh_deriv_torch))}")
+    
+    # 4. Softmax Comparison (2D case)
+    print("\nSoftmax Function (2D):")
+    # NumPy output
+    softmax_np = ActivationFunction.softmax(x_2d_np)
+    
+    # PyTorch output
+    softmax_torch = torch.nn.functional.softmax(x_2d_torch, dim=1)
+    
+    print(f"Input:\n{x_2d_np}")
+    print(f"NumPy Softmax:\n{softmax_np}")
+    print(f"PyTorch Softmax:\n{softmax_torch.detach().numpy()}")
+    print(f"Max Difference:      {np.max(np.abs(softmax_np - softmax_torch.detach().numpy()))}")
+    
+    # 5. Softmax derivative (more complex, requires element-by-element comparison)
+    print("\nSoftmax Derivative:")
+    # For a simple case, compare one row at a time
+    for i in range(len(x_2d_np)):
+        print(f"\nSample {i+1}:")
+        # Get the numpy Jacobian
+        single_input = x_2d_np[i].reshape(1, -1)
+        jacobian_np = ActivationFunction.derivative_softmax(single_input)[0]
+        
+        # Get PyTorch Jacobian through manual computation
+        # This is trickier since PyTorch doesn't compute the full Jacobian automatically
+        x_single = torch.tensor(x_2d_np[i], requires_grad=True)
+        softmax_single = torch.nn.functional.softmax(x_single, dim=0)
+        
+        # Manually compute Jacobian by taking derivative for each output dimension
+        jacobian_torch = np.zeros((len(x_single), len(x_single)))
+        for j in range(len(x_single)):
+            # Zero gradients
+            if x_single.grad is not None:
+                x_single.grad.zero_()
+            
+            # Compute gradient for jth output
+            softmax_single[j].backward(retain_graph=True)
+            jacobian_torch[:, j] = x_single.grad.numpy()
+        
+        print(f"NumPy Jacobian:\n{jacobian_np}")
+        print(f"PyTorch Jacobian:\n{jacobian_torch}")
+        print(f"Max Difference:      {np.max(np.abs(jacobian_np - jacobian_torch))}")
