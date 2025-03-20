@@ -1,5 +1,8 @@
 import numpy as np
 import time
+import matplotlib.pyplot as plt
+from Layer import OutputLayer
+
 
 class ArtificialNeuralNetwork:
     def __init__(self, seeds=0, *layers):
@@ -17,6 +20,9 @@ class ArtificialNeuralNetwork:
             delta = layer.backward(lr, delta)
 
     def train(self, data_loader, loss_function, lr, epochs, verbose=-1):
+        if isinstance(self.layers[-1], OutputLayer):
+            self.layers[-1].loss_funct = loss_function
+
         training_time = 0
         epoch_times = []
         epoch_losses = []
@@ -49,9 +55,15 @@ class ArtificialNeuralNetwork:
         return
 
     def test(self, data_loader):
+
         correct = 0
         total = 0
         start_time = time.time()
+
+        # Take one batch for visualization
+        visualize_batch = None
+        visualize_preds = None
+        visualize_labels = None
 
         for x, y in data_loader():
             output = self.forward(x)
@@ -60,6 +72,34 @@ class ArtificialNeuralNetwork:
             total += y.shape[0]
             correct += np.sum(pred == y)
 
+            # Save first batch for visualization
+            if visualize_batch is None:
+                visualize_batch = x[:25].copy()  # Take first 25 examples
+                visualize_preds = pred[:25].copy()
+                visualize_labels = y[:25].copy()
+
         test_time = time.time() - start_time
         accuracy = 100 * correct / total
         print(f"Test Accuracy: {accuracy:.2f}%, Time: {test_time:.2f}s")
+
+        # Display the images, predictions, and ground truth
+        if visualize_batch is not None:
+            plt.figure(figsize=(10, 10))
+            for i in range(min(25, len(visualize_batch))):
+                plt.subplot(5, 5, i+1)
+                plt.xticks([])
+                plt.yticks([])
+                plt.grid(False)
+
+                # Reshape if the input is flattened (e.g., MNIST)
+                if visualize_batch[i].shape[0] == 784:
+                    plt.imshow(visualize_batch[i].reshape(28, 28), cmap='gray')
+                else:
+                    plt.imshow(visualize_batch[i], cmap='gray')
+
+                color = 'green' if visualize_preds[i] == visualize_labels[i] else 'red'
+                plt.title(f"Pred: {visualize_preds[i]}\nTrue: {visualize_labels[i]}",
+                          color=color)
+
+            plt.tight_layout()
+            plt.show()

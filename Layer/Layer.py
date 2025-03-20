@@ -6,12 +6,13 @@ import numpy as np
 class Layer:
     def __init__(self, weight_init: InitializerType, bias_init: InitializerType, 
                 param_1, param_2, num_neurons, input_size, 
-                activation=ActivationFunction.linear, layer_name=None):
+                activation=ActivationFunction.linear, alpha = None, layer_name=None):
         self.layer_name = layer_name
         self.activation_func = activation
         self.derivative_activation = None
         self.sum = None
         self.output = None
+        self.alpha = None
 
         # Initialize weights and biases
         self.weights = Initializer.init_weights(
@@ -44,15 +45,34 @@ class Layer:
             self.derivative_activation = ActivationFunction.derivative_tanh
         elif activation == ActivationFunction.softmax:
             self.derivative_activation = ActivationFunction.derivative_softmax
+        elif activation == ActivationFunction.leaky_relu:
+            self.derivative_activation = ActivationFunction.derivative_leaky_relu
+            self.alpha = 0.01 if alpha is None else alpha
+        elif activation == ActivationFunction.prelu:
+            self.derivative_activation = ActivationFunction.derivative_prelu
+            self.alpha = 0.01 if alpha is None else alpha
+        else:
+            raise ValueError(f"Activation function {activation} is not supported")
 
     def forward(self, x):
         self.last_input = x
         self.sum = np.dot(x, self.weights.T) + self.biases
-        self.output = self.activation_func(self.sum)
+        if self.alpha is not None:
+            self.output = ActivationFunction.prelu(self.sum, self.alpha)
+        else:
+            self.output = self.activation_func(self.sum)
         return self.output
 
     def backward(self, lr, delta_next):
-        local_grad = self.derivative_activation(self.sum)
+        if self.alpha is not None:
+            local_grad = self.derivative_activation(self.sum, self.alpha)
+        else:
+            local_grad = self.derivative_activation(self.sum)
+
+        # Handle potential NaN/Inf values
+        local_grad = np.nan_to_num(local_grad, nan=0.0, posinf=1.0, neginf=-1.0)
+        delta_next = np.nan_to_num(delta_next, nan=0.0, posinf=1.0, neginf=-1.0)
+
         delta = local_grad * delta_next
 
         grad_w = np.dot(delta.T, self.last_input) / self.last_input.shape[0]
