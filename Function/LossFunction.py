@@ -1,7 +1,5 @@
 import torch
 import numpy as np
-import time
-import matplotlib.pyplot as plt
 
 class LossFunction:
     @staticmethod
@@ -11,6 +9,7 @@ class LossFunction:
         return np.mean((y_pred - y_true) ** 2)
 
     @staticmethod
+    @torch.compile
     def mean_squared_error_derivative(y_pred, y_true, epsilon=1e-7):
         y_pred = np.clip(y_pred, epsilon, 1.0 - epsilon)
         y_true = np.clip(y_true, epsilon, 1.0 - epsilon)
@@ -23,6 +22,7 @@ class LossFunction:
         return -np.mean(y_true * np.log(y_pred) + (1 - y_true) * np.log(1 - y_pred))
 
     @staticmethod
+    @torch.compile
     def binary_cross_entropy_derivative(y_pred, y_true, epsilon=1e-7):
         y_pred = np.clip(y_pred, epsilon, 1.0 - epsilon)
         y_true = np.clip(y_true, epsilon, 1.0 - epsilon)
@@ -42,6 +42,7 @@ class LossFunction:
             return -np.mean(np.sum(y_true * np.log(y_pred), axis=1))
 
     @staticmethod
+    @torch.compile
     def categorical_cross_entropy_derivative(y_pred, y_true, epsilon=1e-7):
         y_pred = np.clip(y_pred, epsilon, 1.0 - epsilon)
         y_true = np.clip(y_true, epsilon, 1.0 - epsilon)
