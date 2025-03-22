@@ -2,7 +2,7 @@ import numpy as np
 import time
 import matplotlib.pyplot as plt
 from Layer import OutputLayer
-
+import pickle
 
 class ArtificialNeuralNetwork:
     def __init__(self, seeds=0, *layers):
@@ -103,3 +103,21 @@ class ArtificialNeuralNetwork:
 
             plt.tight_layout()
             plt.show()
+
+    def save(self, filename):
+        if not filename.endswith(".pkl"):
+            filename += ".pkl"
+        filename = "models/" + filename
+        with open(filename, 'wb') as f:
+            pickle.dump(self.layers, f)
+        print(f"Model saved to {filename}")
+
+
+    def load(self,filename):
+        filename = "models/" + filename
+        with open(filename, 'rb') as f:
+            self.layers = pickle.load(f)
+            for layer in self.layers:
+                print(layer)
+                print(layer.alpha)
+        print(f"Model loaded from {filename}")

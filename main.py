@@ -87,10 +87,18 @@ if __name__ == "__main__":
         train_loader,
         loss_function=LossFunction.categorical_cross_entropy,
         lr=0.01,
-        epochs=50,
+        epochs=20,
         verbose=1
     )
 
     ann.test(test_loader)
+
+    ann.save("ann_model.pkl")
+
+    new_model = ArtificialNeuralNetwork()
+
+    new_model.load("ann_model.pkl")
+
+    new_model.test(test_loader)
 
 
