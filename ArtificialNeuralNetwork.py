@@ -3,6 +3,7 @@ import time
 import matplotlib.pyplot as plt
 from Layer import OutputLayer
 import pickle
+from ANNVisualizer import ANNVisualizer
 
 class ArtificialNeuralNetwork:
     def __init__(self, seeds=0, *layers):
@@ -121,3 +122,12 @@ class ArtificialNeuralNetwork:
                 print(layer)
                 print(layer.alpha)
         print(f"Model loaded from {filename}")
+
+    def visualize_structure(self):
+        self.visualizer.plot_network_structure()
+    
+    def visualize_weight_distribution(self, layer_indices):
+        self.visualizer.plot_weight_distribution(layer_indices)
+    
+    def visualize_gradient_distribution(self, layer_indices):
+        self.visualizer.plot_gradient_distribution(layer_indices)

@@ -100,5 +100,8 @@ if __name__ == "__main__":
     new_model.load("ann_model.pkl")
 
     new_model.test(test_loader)
+    new_model.visualize_structure()
+    new_model.visualize_weight_distribution([0, 1, 2])
+    new_model.visualize_gradient_distribution([0, 1, 2])
 
 
