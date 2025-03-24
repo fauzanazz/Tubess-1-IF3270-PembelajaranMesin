@@ -5,3 +5,5 @@
 /Function/__pycache__
 /Layer/__pycache__
 /.idea
+*.pyc
+/.idea

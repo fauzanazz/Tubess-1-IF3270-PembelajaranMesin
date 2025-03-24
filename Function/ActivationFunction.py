@@ -66,7 +66,6 @@ class ActivationFunction:
         return 1 - np.tanh(x) ** 2
 
     @staticmethod
-    @njit(cache=True, fastmath=True)
     def derivative_softmax(x):
         s = np.exp(x - np.max(x, axis=-1, keepdims=True))
         s = s / np.sum(s, axis=-1, keepdims=True)
@@ -123,17 +122,18 @@ if __name__ == "__main__":
     
     # 1. ReLU Comparison
     print("\nReLU Function:")
+
     # NumPy output
     relu_np = ActivationFunction.relu(x_np)
     relu_deriv_np = ActivationFunction.derivative_relu(x_np)
-    
+
     # PyTorch output
     relu_torch = torch.relu(x_torch)
     # PyTorch derivative using autograd
     relu_torch.sum().backward()
-    relu_deriv_torch = x_torch.grad.numpy()
+    relu_deriv_torch = x_torch.grad.clone().numpy()
     x_torch.grad.zero_()
-    
+
     print(f"Input: {x_np}")
     print(f"NumPy ReLU:          {relu_np}")
     print(f"PyTorch ReLU:        {relu_torch.detach().numpy()}")
@@ -141,20 +141,23 @@ if __name__ == "__main__":
     print(f"PyTorch Derivative:  {relu_deriv_torch}")
     print(f"Max Difference:      {np.max(np.abs(relu_np - relu_torch.detach().numpy()))}")
     print(f"Max Deriv Diff:      {np.max(np.abs(relu_deriv_np - relu_deriv_torch))}")
-    
+
     # 2. Sigmoid Comparison
     print("\nSigmoid Function:")
+    # Reset tensor with requires_grad
+    x_torch = torch.tensor(x_np, requires_grad=True)
+
     # NumPy output
     sigmoid_np = ActivationFunction.sigmoid(x_np)
     sigmoid_deriv_np = ActivationFunction.derivative_sigmoid(x_np)
-    
+
     # PyTorch output
     sigmoid_torch = torch.sigmoid(x_torch)
     # PyTorch derivative using autograd
     sigmoid_torch.sum().backward()
-    sigmoid_deriv_torch = x_torch.grad.numpy()
+    sigmoid_deriv_torch = x_torch.grad.clone().numpy()
     x_torch.grad.zero_()
-    
+
     print(f"Input: {x_np}")
     print(f"NumPy Sigmoid:       {sigmoid_np}")
     print(f"PyTorch Sigmoid:     {sigmoid_torch.detach().numpy()}")
@@ -162,18 +165,21 @@ if __name__ == "__main__":
     print(f"PyTorch Derivative:  {sigmoid_deriv_torch}")
     print(f"Max Difference:      {np.max(np.abs(sigmoid_np - sigmoid_torch.detach().numpy()))}")
     print(f"Max Deriv Diff:      {np.max(np.abs(sigmoid_deriv_np - sigmoid_deriv_torch))}")
-    
+
     # 3. Tanh Comparison
     print("\nTanh Function:")
     # NumPy output
     tanh_np = ActivationFunction.tanh(x_np)
     tanh_deriv_np = ActivationFunction.derivative_tanh(x_np)
-    
+
+    # Reset tensor with requires_grad
+    x_torch = torch.tensor(x_np, requires_grad=True)
+
     # PyTorch output
     tanh_torch = torch.tanh(x_torch)
     # PyTorch derivative using autograd
-    tanh_torch.sum().backward()
-    tanh_deriv_torch = x_torch.grad.numpy()
+    tanh_torch.sum().backward(retain_graph=True)
+    tanh_deriv_torch = x_torch.grad.numpy().copy()
     x_torch.grad.zero_()
     
     print(f"Input: {x_np}")
@@ -197,9 +203,8 @@ if __name__ == "__main__":
     print(f"PyTorch Softmax:\n{softmax_torch.detach().numpy()}")
     print(f"Max Difference:      {np.max(np.abs(softmax_np - softmax_torch.detach().numpy()))}")
     
-    # 5. Softmax derivative (more complex, requires element-by-element comparison)
+    # 5. Softmax derivative
     print("\nSoftmax Derivative:")
-    # For a simple case, compare one row at a time
     for i in range(len(x_2d_np)):
         print(f"\nSample {i+1}:")
         # Get the numpy Jacobian
@@ -207,14 +212,12 @@ if __name__ == "__main__":
         jacobian_np = ActivationFunction.derivative_softmax(single_input)[0]
         
         # Get PyTorch Jacobian through manual computation
-        # This is trickier since PyTorch doesn't compute the full Jacobian automatically
         x_single = torch.tensor(x_2d_np[i], requires_grad=True)
         softmax_single = torch.nn.functional.softmax(x_single, dim=0)
         
         # Manually compute Jacobian by taking derivative for each output dimension
         jacobian_torch = np.zeros((len(x_single), len(x_single)))
         for j in range(len(x_single)):
-            # Zero gradients
             if x_single.grad is not None:
                 x_single.grad.zero_()
             

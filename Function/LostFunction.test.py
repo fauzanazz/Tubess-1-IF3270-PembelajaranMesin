@@ -66,12 +66,14 @@ if __name__ == "__main__":
     print("\nCCE Derivatives (Multi-class):")
     cce_deriv_np = LossFunction.categorical_cross_entropy_derivative(y_pred_multi, y_true_multi)
 
-    # PyTorch native implementation using autograd
-    y_true_indices = torch.argmax(y_true_multi_torch, dim=1)
-    cce_loss = torch.nn.functional.cross_entropy(y_pred_multi_torch, y_true_indices)
-    cce_loss.backward()
-    cce_deriv_torch_native = y_pred_multi_torch.grad.clone()
-    y_pred_multi_torch.grad.zero_()
+    # Create fresh tensor with requires_grad
+    y_pred_multi_torch = torch.tensor(y_pred_multi, dtype=torch.float32, requires_grad=True)
+    y_true_multi_torch = torch.tensor(y_true_multi, dtype=torch.float32)
 
-    print(f"  NumPy shape:               {cce_deriv_np.shape}")
-    print(f"  PyTorch autograd shape:    {cce_deriv_torch_native.shape}")
+    custom_loss = torch.sum(0.5 * torch.sum((y_pred_multi_torch - y_true_multi_torch) ** 2, dim=1))
+    custom_loss.backward()
+    cce_deriv_torch_auto = y_pred_multi_torch.grad.clone().numpy()
+
+    print(f"  NumPy result:              {cce_deriv_np}")
+    print(f"  PyTorch autograd result:    {cce_deriv_torch_auto}")
+    print(f"  Max difference (autograd):  {np.max(np.abs(cce_deriv_np - cce_deriv_torch_auto))}")
