@@ -3,6 +3,7 @@ import time
 import matplotlib.pyplot as plt
 from Layer import OutputLayer
 import pickle
+import os
 
 class ArtificialNeuralNetwork:
     def __init__(self, seeds=0, *layers):
@@ -74,7 +75,7 @@ class ArtificialNeuralNetwork:
 
             # Save first batch for visualization
             if visualize_batch is None:
-                visualize_batch = x[:25].copy()  # Take first 25 examples
+                visualize_batch = x[:25].copy()
                 visualize_preds = pred[:25].copy()
                 visualize_labels = y[:25].copy()
 
@@ -103,14 +104,18 @@ class ArtificialNeuralNetwork:
 
             plt.tight_layout()
             plt.show()
+        return accuracy
 
     def save(self, filename):
         if not filename.endswith(".pkl"):
             filename += ".pkl"
-        filename = "models/" + filename
-        with open(filename, 'wb') as f:
+        model_dir = "models"
+        if not os.path.exists(model_dir):
+            os.makedirs(model_dir)
+        filepath = os.path.join(model_dir, filename)
+        with open(filepath, 'wb') as f:
             pickle.dump(self.layers, f)
-        print(f"Model saved to {filename}")
+        print(f"Model saved to {filepath}")
 
 
     def load(self,filename):

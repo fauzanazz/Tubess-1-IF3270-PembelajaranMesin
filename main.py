@@ -86,8 +86,8 @@ if __name__ == "__main__":
     ann.train(
         train_loader,
         loss_function=LossFunction.categorical_cross_entropy,
-        lr=0.01,
-        epochs=20,
+        lr=0.005,
+        epochs=50,
         verbose=1
     )
 
@@ -98,6 +98,14 @@ if __name__ == "__main__":
     new_model = ArtificialNeuralNetwork()
 
     new_model.load("ann_model.pkl")
+
+    new_model.train(
+        train_loader,
+        loss_function=LossFunction.categorical_cross_entropy,
+        lr=0.005,
+        epochs=50,
+        verbose=1
+    )
 
     new_model.test(test_loader)
 
