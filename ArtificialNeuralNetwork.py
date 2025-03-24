@@ -10,6 +10,7 @@ class ArtificialNeuralNetwork:
     def __init__(self, seeds=0, *layers):
         np.random.seed(seeds)
         self.layers = layers
+        self.visualizer = ANNVisualizer(self)
 
     def forward(self, x):
         for layer in self.layers:
