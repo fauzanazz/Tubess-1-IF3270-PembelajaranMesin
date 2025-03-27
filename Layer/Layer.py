@@ -21,7 +21,7 @@ class Layer:
             param_2=param_2,
             input_size=input_size,
             num_neurons=num_neurons
-        )
+        )        
         self.biases = Initializer.init_bias(
             bias_init=bias_init,
             param_1=param_1,
@@ -29,9 +29,9 @@ class Layer:
             num_neurons=num_neurons
         )
         
-        # Override with Xavier initialization for consistency
-        self.weights = np.random.randn(num_neurons, input_size) * np.sqrt(2.0 / input_size)
-        self.biases = np.zeros(num_neurons)
+        # # Override with Xavier initialization for consistency
+        # self.weights = np.random.randn(num_neurons, input_size) * np.sqrt(2.0 / input_size)
+        # self.biases = np.zeros(num_neurons)
         self.last_input = None
 
         # Set the derivative function based on activation

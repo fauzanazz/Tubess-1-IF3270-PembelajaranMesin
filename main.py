@@ -51,7 +51,7 @@ if __name__ == "__main__":
     ann = ArtificialNeuralNetwork(
         123,
         Layer(
-            weight_init=InitializerType.RANDOM_DIST_UNIFORM,
+            weight_init=InitializerType.XAVIER,
             bias_init=InitializerType.ZERO,
             input_size=input_size,
             num_neurons=128,
@@ -61,7 +61,7 @@ if __name__ == "__main__":
             layer_name=f"Hidden Layer 0"
         ),
         *[Layer(
-            weight_init=InitializerType.RANDOM_DIST_UNIFORM,
+            weight_init=InitializerType.XAVIER,
             bias_init=InitializerType.ZERO,
             input_size=128,
             num_neurons=128,
@@ -71,7 +71,7 @@ if __name__ == "__main__":
             layer_name=f"Hidden Layer 0"
         ) for _ in range(hidden_layers)],
         OutputLayer(
-            weight_init=InitializerType.RANDOM_DIST_UNIFORM,
+            weight_init=InitializerType.XAVIER,
             bias_init=InitializerType.ZERO,
             input_size=128,
             num_neurons=output_size,
@@ -93,23 +93,23 @@ if __name__ == "__main__":
 
     ann.test(test_loader)
 
-    ann.save("ann_model.pkl")
+    # ann.save("ann_model.pkl")
 
-    new_model = ArtificialNeuralNetwork()
+    # new_model = ArtificialNeuralNetwork()
 
-    new_model.load("ann_model.pkl")
+    # new_model.load("ann_model.pkl")
 
-    new_model.train(
-        train_loader,
-        loss_function=LossFunction.categorical_cross_entropy,
-        lr=0.005,
-        epochs=50,
-        verbose=1
-    )
+    # new_model.train(
+    #     train_loader,
+    #     loss_function=LossFunction.categorical_cross_entropy,
+    #     lr=0.005,
+    #     epochs=50,
+    #     verbose=1
+    # )
 
-    new_model.test(test_loader)
-    new_model.visualize_structure()
-    new_model.visualize_weight_distribution([0, 1, 2])
-    new_model.visualize_gradient_distribution([0, 1, 2])
+    # ann.test(test_loader)
+    # ann.visualize_structure()
+    # ann.visualize_weight_distribution([0, 1, 2])
+    # ann.visualize_gradient_distribution([0, 1, 2])
 
 
