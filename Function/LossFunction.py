@@ -30,7 +30,6 @@ class LossFunction:
     def categorical_cross_entropy(y_pred, y_true, epsilon=1e-7):
         y_pred = np.clip(y_pred, epsilon, 1.0 - epsilon)
 
-        # Handle different dimensions
         if y_pred.ndim == 1:
             # For 1D arrays (binary case)
             return -np.mean(y_true * np.log(y_pred) + (1 - y_true) * np.log(1 - y_pred))
@@ -42,7 +41,4 @@ class LossFunction:
     @njit(cache=True, fastmath=True)
     def categorical_cross_entropy_derivative(y_pred, y_true, epsilon=1e-7):
         y_pred = np.clip(y_pred, epsilon, 1.0 - epsilon)
-
-        # For softmax outputs, the correct formula is (y_pred - y_true)
-        # This is more numerically stable than computing -y_true/y_pred directly
         return y_pred - y_true

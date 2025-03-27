@@ -29,9 +29,9 @@ if __name__ == "__main__":
     hidden_layers = 3
     hidden_size = 128
     output_size = 10
-    learning_rate = 0.001
-    param_1 = 0
-    param_2 = 0
+    learning_rate = 0.01
+    param_1 = 0.01
+    param_2 = 0.001
     batch_size = 128
 
     # Load MNIST dataset using fetch_openml
@@ -86,18 +86,18 @@ if __name__ == "__main__":
     ann.train(
         train_loader,
         loss_function=LossFunction.categorical_cross_entropy,
-        lr=0.005,
-        epochs=50,
+        lr=learning_rate,
+        epochs=20,
         verbose=1
     )
 
     ann.test(test_loader)
 
-    # ann.save("ann_model.pkl")
+    ann.save("ann_model.pkl")
 
-    # new_model = ArtificialNeuralNetwork()
+    new_model = ArtificialNeuralNetwork()
 
-    # new_model.load("ann_model.pkl")
+    new_model.load("ann_model.pkl")
 
     # new_model.train(
     #     train_loader,
@@ -106,10 +106,10 @@ if __name__ == "__main__":
     #     epochs=50,
     #     verbose=1
     # )
-
-    # ann.test(test_loader)
-    # ann.visualize_structure()
-    # ann.visualize_weight_distribution([0, 1, 2])
-    # ann.visualize_gradient_distribution([0, 1, 2])
+    #
+    # new_model.test(test_loader)
+    # new_model.visualize_structure()
+    new_model.visualize_weight_distribution([0, 1, 2])
+    new_model.visualize_gradient_distribution([0, 1, 2])
 
 

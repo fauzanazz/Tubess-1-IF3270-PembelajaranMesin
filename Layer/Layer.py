@@ -14,7 +14,6 @@ class Layer:
         self.output = None
         self.alpha = None
 
-        # Initialize weights and biases
         self.weights = Initializer.init_weights(
             weight_init=weight_init,
             param_1=param_1,
@@ -28,13 +27,9 @@ class Layer:
             param_2=param_2,
             num_neurons=num_neurons
         )
-        
-        # # Override with Xavier initialization for consistency
-        # self.weights = np.random.randn(num_neurons, input_size) * np.sqrt(2.0 / input_size)
-        # self.biases = np.zeros(num_neurons)
+
         self.last_input = None
 
-        # Set the derivative function based on activation
         if activation == ActivationFunction.linear:
             self.derivative_activation = ActivationFunction.derivative_linear
         elif activation == ActivationFunction.relu:
@@ -69,7 +64,6 @@ class Layer:
         else:
             local_grad = self.derivative_activation(self.sum)
 
-        # Handle potential NaN/Inf values
         local_grad = np.nan_to_num(local_grad, nan=0.0, posinf=1.0, neginf=-1.0)
         delta_next = np.nan_to_num(delta_next, nan=0.0, posinf=1.0, neginf=-1.0)
 
