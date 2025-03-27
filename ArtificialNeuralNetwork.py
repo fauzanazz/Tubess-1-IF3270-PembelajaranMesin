@@ -1,10 +1,11 @@
 import numpy as np
 import time
-import matplotlib.pyplot as plt
 from Layer import OutputLayer
 import pickle
 from ANNVisualizer import ANNVisualizer
 import os
+from tqdm.auto import tqdm
+
 
 class ArtificialNeuralNetwork:
     def __init__(self, seeds=0, *layers):
@@ -34,22 +35,28 @@ class ArtificialNeuralNetwork:
         for layer in reversed(self.layers[:-1]):
             delta = layer.backward(lr, delta)
 
-    def train(self, x, y, loss_function, lr, epochs, verbose=-1, batch_size=32, shuffle=True):
+    def train(self, x, y, loss_function, lr, epochs, verbose=False, batch_size=32, shuffle=True, validation_data=None):
         if isinstance(self.layers[-1], OutputLayer):
             self.layers[-1].loss_funct = loss_function
 
         training_time = 0
         epoch_times = []
         epoch_losses = []
+        val_losses = []
 
-        train_loader = lambda: self.batch_generator(x, y, batch_size, shuffle)
+        has_validation = validation_data is not None
+        if has_validation:
+            x_val, y_val = validation_data
 
-        for epoch in range(epochs):
+        epochs_iter = tqdm(range(epochs), desc="Training", disable=not verbose)
+        for _ in epochs_iter:
             start_time = time.time()
             total_loss = 0.0
             count = 0
 
+            train_loader = lambda: self.batch_generator(x, y, batch_size, shuffle)
             data_batches = train_loader()
+
             for x_batch, y_batch in data_batches:
                 y_onehot = np.zeros((x_batch.shape[0], self.layers[-1].num_neurons))
                 y_onehot[np.arange(x_batch.shape[0]), y_batch] = 1
@@ -65,11 +72,22 @@ class ArtificialNeuralNetwork:
             avg_loss = total_loss / count if count > 0 else 0
             epoch_losses.append(avg_loss)
 
-            if verbose > 0 and (epoch + 1) % verbose == 0:
-                print(f"Epoch {epoch + 1}: Loss = {avg_loss:.4f}, Time = {epoch_time:.2f}s")
+            val_loss = None
+            if has_validation:
+                y_val_onehot = np.zeros((x_val.shape[0], self.layers[-1].num_neurons))
+                y_val_onehot[np.arange(x_val.shape[0]), y_val] = 1
+                val_output = self.forward(x_val)
+                val_loss = loss_function(y_val_onehot, val_output)
+                val_losses.append(val_loss)
+
+            if verbose:
+                status = f"Loss: {avg_loss:.4f}"
+                if has_validation:
+                    status += f", Val Loss: {val_loss:.4f}"
+                epochs_iter.set_postfix_str(status)
 
         print(f"Total training time: {training_time:.2f}s")
-        return
+        return epoch_losses, val_losses if has_validation else epoch_losses
 
     def predict(self, x):
         return np.argmax(self.forward(x), axis=1)

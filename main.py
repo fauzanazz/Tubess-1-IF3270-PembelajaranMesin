@@ -32,7 +32,7 @@ if __name__ == "__main__":
     learning_rate = 0.001
     param_1 = 0
     param_2 = 0.5
-    batch_size = 128
+    batch_size = 64
 
     # Load MNIST dataset using fetch_openml
     X, y = fetch_openml('mnist_784', version=1, return_X_y=True, as_frame=False)
@@ -53,7 +53,7 @@ if __name__ == "__main__":
             num_neurons=20,
             param_1=param_1,
             param_2=param_2,
-            activation=ActivationFunction.relu,
+            activation=ActivationFunction.prelu,
             alpha=0.45,
             layer_name=f"Hidden Layer 0"
         ),
@@ -64,7 +64,7 @@ if __name__ == "__main__":
             num_neurons=20,
             param_1=param_1,
             param_2=param_2,
-            activation=ActivationFunction.relu,
+            activation=ActivationFunction.prelu,
             alpha=0.45,
             layer_name=f"Hidden Layer 0"
         ) for _ in range(hidden_layers)],
@@ -86,8 +86,10 @@ if __name__ == "__main__":
         y=y_train,
         loss_function=LossFunction.categorical_cross_entropy,
         lr=learning_rate,
-        epochs=20,
-        verbose=1
+        epochs=40,
+        batch_size=batch_size,
+        verbose=True,
+        validation_data=(X_test, y_test),
     )
 
     print(ann.evaluate(X_test, y_test))
