@@ -27,7 +27,7 @@ class Layer:
             param_2=param_2,
             num_neurons=num_neurons
         )
-
+        self.grad_weights = np.zeros_like(self.weights)
         self.last_input = None
 
         if activation == ActivationFunction.linear:
@@ -69,10 +69,10 @@ class Layer:
 
         delta = local_grad * delta_next
 
-        grad_w = np.dot(delta.T, self.last_input) / self.last_input.shape[0]
+        self.grad_weights = np.dot(delta.T, self.last_input) / self.last_input.shape[0]
         grad_b = np.mean(delta, axis=0)
 
-        self.weights -= lr * grad_w
+        self.weights -= lr * self.grad_weights
         self.biases -= lr * grad_b
 
         delta_prev = np.dot(delta, self.weights)

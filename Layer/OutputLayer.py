@@ -33,10 +33,10 @@ class OutputLayer(Layer):
     def backward(self, lr, target):
         delta = self.derivative_loss(self.output, target)
 
-        grad_w = np.dot(delta.T, self.last_input) / self.last_input.shape[0]
+        self.grad_weights = np.dot(delta.T, self.last_input) / self.last_input.shape[0]
         grad_b = np.mean(delta, axis=0)
 
-        self.weights -= lr * grad_w
+        self.weights -= lr * self.grad_weights
         self.biases -= lr * grad_b
 
         delta_prev = np.dot(delta, self.weights)

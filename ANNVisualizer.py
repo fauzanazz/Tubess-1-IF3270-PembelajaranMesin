@@ -57,7 +57,7 @@ class ANNVisualizer:
                 print(f"Layer {idx} tidak ditemukan.")
                 continue
             
-            gradients = self.model.layers[idx].weights.flatten()
+            gradients = self.model.layers[idx].grad_weights.flatten()
             plt.figure(figsize=(6, 4))
             plt.hist(gradients, bins=30, alpha=0.7, color='red', edgecolor='black')
             plt.title(f'Distribusi Gradien Bobot - Layer {idx}')

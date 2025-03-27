@@ -26,12 +26,12 @@ def batch_generator(X, y, batch_size, shuffle=True):
 
 if __name__ == "__main__":
     input_size = 784
-    hidden_layers = 3
+    hidden_layers = 5
     hidden_size = 128
     output_size = 10
-    learning_rate = 0.01
-    param_1 = 0.01
-    param_2 = 0.001
+    learning_rate = 0.001
+    param_1 = 0
+    param_2 = 0.5
     batch_size = 128
 
     # Load MNIST dataset using fetch_openml
@@ -44,36 +44,34 @@ if __name__ == "__main__":
         X, y, test_size=0.2, random_state=123
     )
 
-    # Create train_loader and test_loader as generator objects
-    train_loader = lambda: batch_generator(X_train, y_train, batch_size, shuffle=True)
-    test_loader = lambda: batch_generator(X_test, y_test, batch_size, shuffle=False)
-
     ann = ArtificialNeuralNetwork(
         123,
         Layer(
             weight_init=InitializerType.XAVIER,
             bias_init=InitializerType.ZERO,
             input_size=input_size,
-            num_neurons=128,
+            num_neurons=20,
             param_1=param_1,
             param_2=param_2,
             activation=ActivationFunction.relu,
+            alpha=0.45,
             layer_name=f"Hidden Layer 0"
         ),
         *[Layer(
             weight_init=InitializerType.XAVIER,
             bias_init=InitializerType.ZERO,
-            input_size=128,
-            num_neurons=128,
+            input_size=20,
+            num_neurons=20,
             param_1=param_1,
             param_2=param_2,
             activation=ActivationFunction.relu,
+            alpha=0.45,
             layer_name=f"Hidden Layer 0"
         ) for _ in range(hidden_layers)],
         OutputLayer(
             weight_init=InitializerType.XAVIER,
             bias_init=InitializerType.ZERO,
-            input_size=128,
+            input_size=20,
             num_neurons=output_size,
             param_1=param_1,
             param_2=param_2,
@@ -84,21 +82,25 @@ if __name__ == "__main__":
     )
 
     ann.train(
-        train_loader,
+        x=X_train,
+        y=y_train,
         loss_function=LossFunction.categorical_cross_entropy,
         lr=learning_rate,
         epochs=20,
         verbose=1
     )
 
-    ann.test(test_loader)
+    print(ann.evaluate(X_test, y_test))
 
-    ann.save("ann_model.pkl")
+    ann.visualize_weight_distribution([0, 1, 2])
+    ann.visualize_gradient_distribution([0, 1, 2])
 
-    new_model = ArtificialNeuralNetwork()
-
-    new_model.load("ann_model.pkl")
-
+    # ann.save("ann_model.pkl")
+    #
+    # new_model = ArtificialNeuralNetwork()
+    #
+    # new_model.load("ann_model.pkl")
+    #
     # new_model.train(
     #     train_loader,
     #     loss_function=LossFunction.categorical_cross_entropy,
@@ -108,8 +110,8 @@ if __name__ == "__main__":
     # )
     #
     # new_model.test(test_loader)
-    # new_model.visualize_structure()
-    new_model.visualize_weight_distribution([0, 1, 2])
-    new_model.visualize_gradient_distribution([0, 1, 2])
+    # fig = new_model.visualize_structure()
+    # new_model.visualize_weight_distribution([0, 1, 2])
+    # new_model.visualize_gradient_distribution([0, 1, 2])
 
 

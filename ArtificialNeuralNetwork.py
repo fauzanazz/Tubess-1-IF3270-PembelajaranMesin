@@ -12,6 +12,18 @@ class ArtificialNeuralNetwork:
         self.layers = layers
         self.visualizer = ANNVisualizer(self)
 
+    def batch_generator(self, X, y, batch_size, shuffle=True):
+        n_samples = X.shape[0]
+        indices = np.arange(n_samples)
+
+        if shuffle:
+            np.random.shuffle(indices)
+
+        for start_idx in range(0, n_samples, batch_size):
+            end_idx = min(start_idx + batch_size, n_samples)
+            batch_indices = indices[start_idx:end_idx]
+            yield X[batch_indices], y[batch_indices]
+
     def forward(self, x):
         for layer in self.layers:
             x = layer.forward(x)
@@ -22,7 +34,7 @@ class ArtificialNeuralNetwork:
         for layer in reversed(self.layers[:-1]):
             delta = layer.backward(lr, delta)
 
-    def train(self, data_loader, loss_function, lr, epochs, verbose=-1):
+    def train(self, x, y, loss_function, lr, epochs, verbose=-1, batch_size=32, shuffle=True):
         if isinstance(self.layers[-1], OutputLayer):
             self.layers[-1].loss_funct = loss_function
 
@@ -30,16 +42,18 @@ class ArtificialNeuralNetwork:
         epoch_times = []
         epoch_losses = []
 
+        train_loader = lambda: self.batch_generator(x, y, batch_size, shuffle)
+
         for epoch in range(epochs):
             start_time = time.time()
             total_loss = 0.0
             count = 0
 
-            for x, y in data_loader():
-                y_onehot = np.zeros((x.shape[0], self.layers[-1].num_neurons))
-                y_onehot[np.arange(x.shape[0]), y] = 1
-
-                output = self.forward(x)
+            data_batches = train_loader()
+            for x_batch, y_batch in data_batches:
+                y_onehot = np.zeros((x_batch.shape[0], self.layers[-1].num_neurons))
+                y_onehot[np.arange(x_batch.shape[0]), y_batch] = 1
+                output = self.forward(x_batch)
                 loss = loss_function(y_onehot, output)
                 total_loss += loss
                 count += 1
@@ -48,7 +62,7 @@ class ArtificialNeuralNetwork:
             epoch_time = time.time() - start_time
             training_time += epoch_time
             epoch_times.append(epoch_time)
-            avg_loss = total_loss / count
+            avg_loss = total_loss / count if count > 0 else 0
             epoch_losses.append(avg_loss)
 
             if verbose > 0 and (epoch + 1) % verbose == 0:
@@ -57,55 +71,12 @@ class ArtificialNeuralNetwork:
         print(f"Total training time: {training_time:.2f}s")
         return
 
-    def test(self, data_loader):
+    def predict(self, x):
+        return np.argmax(self.forward(x), axis=1)
 
-        correct = 0
-        total = 0
-        start_time = time.time()
-
-        # Take one batch for visualization
-        visualize_batch = None
-        visualize_preds = None
-        visualize_labels = None
-
-        for x, y in data_loader():
-            output = self.forward(x)
-            pred = np.argmax(output, axis=1)
-
-            total += y.shape[0]
-            correct += np.sum(pred == y)
-
-            # Save first batch for visualization
-            if visualize_batch is None:
-                visualize_batch = x[:25].copy()
-                visualize_preds = pred[:25].copy()
-                visualize_labels = y[:25].copy()
-
-        test_time = time.time() - start_time
-        accuracy = 100 * correct / total
-        print(f"Test Accuracy: {accuracy:.2f}%, Time: {test_time:.2f}s")
-
-        # Display the images, predictions, and ground truth
-        if visualize_batch is not None:
-            plt.figure(figsize=(10, 10))
-            for i in range(min(25, len(visualize_batch))):
-                plt.subplot(5, 5, i+1)
-                plt.xticks([])
-                plt.yticks([])
-                plt.grid(False)
-
-                # Reshape if the input is flattened (e.g., MNIST)
-                if visualize_batch[i].shape[0] == 784:
-                    plt.imshow(visualize_batch[i].reshape(28, 28), cmap='gray')
-                else:
-                    plt.imshow(visualize_batch[i], cmap='gray')
-
-                color = 'green' if visualize_preds[i] == visualize_labels[i] else 'red'
-                plt.title(f"Pred: {visualize_preds[i]}\nTrue: {visualize_labels[i]}",
-                          color=color)
-
-            plt.tight_layout()
-            plt.show()
+    def evaluate(self, x, y):
+        y_pred = self.predict(x)
+        accuracy = np.mean(y_pred == y)
         return accuracy
 
     def save(self, filename):
@@ -130,7 +101,7 @@ class ArtificialNeuralNetwork:
         print(f"Model loaded from {filename}")
 
     def visualize_structure(self):
-        self.visualizer.plot_network_structure()
+        return self.visualizer.plot_network_structure()
     
     def visualize_weight_distribution(self, layer_indices):
         self.visualizer.plot_weight_distribution(layer_indices)
