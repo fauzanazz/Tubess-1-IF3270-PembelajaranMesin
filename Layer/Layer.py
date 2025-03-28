@@ -80,7 +80,7 @@ class Layer:
         if useRMSprop:
             rms = np.sqrt(np.mean(self.sum ** 2, axis=-1, keepdims=True) + self.epsilon)
             normed = self.sum / rms
-            if hasattr(self, 'gamma'):
+            if hasattr(self, 'gamma') and self.gamma is not None:
                 normed = normed * self.gamma
             if self.activation_func in (ActivationFunction.leaky_relu, ActivationFunction.prelu):
                 self.output = self.activation_func(normed, self.alpha)
@@ -110,7 +110,6 @@ class Layer:
         self.grad_weights += reg_gradient
 
         delta_prev = np.dot(delta, self.weights)
-
         self.weights, self.biases = self.optimizer.update(
             layer_name=self.layer_name,
             weights=self.weights,
