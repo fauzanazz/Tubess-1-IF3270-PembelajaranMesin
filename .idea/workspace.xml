@@ -5,18 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="675fe126-bdbb-4d78-b07c-dcbdd927e414" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Function/AdaptiveOptimizer.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Function/Regularizer.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/OneFile.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/enums/RegularizationType.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ArtificialNeuralNetwork.py" beforeDir="false" afterPath="$PROJECT_DIR$/ArtificialNeuralNetwork.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Function/Initializer.py" beforeDir="false" afterPath="$PROJECT_DIR$/Function/Initializer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Function/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/Function/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Function/LossFunction.py" beforeDir="false" afterPath="$PROJECT_DIR$/Function/LossFunction.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Function/Regularizer.py" beforeDir="false" afterPath="$PROJECT_DIR$/Function/Regularizer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Layer/InputLayer.py" beforeDir="false" afterPath="$PROJECT_DIR$/Layer/InputLayer.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Layer/Layer.py" beforeDir="false" afterPath="$PROJECT_DIR$/Layer/Layer.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Layer/OutputLayer.py" beforeDir="false" afterPath="$PROJECT_DIR$/Layer/OutputLayer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Layer/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/Layer/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/enums/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/enums/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/enums/RegularizationType.py" beforeDir="false" afterPath="$PROJECT_DIR$/enums/RegularizationType.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/simple.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/simple.ipynb" afterDir="false" />
     </list>
@@ -56,30 +52,31 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Python.ANNVisualizer.executor&quot;: &quot;Run&quot;,
-    &quot;Python.ActivationFunction.executor&quot;: &quot;Run&quot;,
-    &quot;Python.ActivationFunction.test.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Layer.executor&quot;: &quot;Run&quot;,
-    &quot;Python.LossFunction.executor&quot;: &quot;Run&quot;,
-    &quot;Python.OneFile.executor&quot;: &quot;Run&quot;,
-    &quot;Python.main.executor&quot;: &quot;Run&quot;,
-    &quot;Python.main2.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/mfauzanazhim/Github/Tubess-1-IF3270-PembelajaranMesin&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Python.ANNVisualizer.executor": "Run",
+    "Python.ActivationFunction.executor": "Run",
+    "Python.ActivationFunction.test.executor": "Run",
+    "Python.Layer.executor": "Run",
+    "Python.LossFunction.executor": "Run",
+    "Python.LostFunction.test.executor": "Run",
+    "Python.OneFile.executor": "Run",
+    "Python.main.executor": "Run",
+    "Python.main2.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "master",
+    "ignore.virus.scanning.warn.message": "true",
+    "last_opened_file_path": "/Users/mfauzanazhim/Github/Tubess-1-IF3270-PembelajaranMesin",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="D:\Code\Python\Tubess-1-IF3270-PembelajaranMesin\Neuron" />
@@ -111,29 +108,6 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="ActivationFunction.test" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="Tubess-1-IF3270-PembelajaranMesin" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Function" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Function/ActivationFunction.test.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
     <configuration name="Layer" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Tubess-1-IF3270-PembelajaranMesin" />
       <option name="ENV_FILES" value="" />
@@ -149,6 +123,29 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Layer/Layer.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="LostFunction.test" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="Tubess-1-IF3270-PembelajaranMesin" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Function" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Function/LostFunction.test.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -206,10 +203,10 @@
     <recent_temporary>
       <list>
         <item itemvalue="Python.main" />
+        <item itemvalue="Python.LostFunction.test" />
         <item itemvalue="Python.OneFile" />
         <item itemvalue="Python.Layer" />
         <item itemvalue="Python.ANNVisualizer" />
-        <item itemvalue="Python.ActivationFunction.test" />
       </list>
     </recent_temporary>
   </component>
@@ -243,8 +240,9 @@
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/Tubess_1_IF3270_PembelajaranMesin$OneFile.coverage" NAME="OneFile Coverage Results" MODIFIED="1743159495714" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Tubess_1_IF3270_PembelajaranMesin$ANNVisualizer.coverage" NAME="ANNVisualizer Coverage Results" MODIFIED="1743078159671" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Tubess_1_IF3270_PembelajaranMesin$LostFunction_test.coverage" NAME="LostFunction.test Coverage Results" MODIFIED="1743168713489" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Function" />
     <SUITE FILE_PATH="coverage/Tubess_1_IF3270_PembelajaranMesin$Layer.coverage" NAME="Layer Coverage Results" MODIFIED="1743150458287" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Layer" />
-    <SUITE FILE_PATH="coverage/Tubess_1_IF3270_PembelajaranMesin$main.coverage" NAME="main Coverage Results" MODIFIED="1743158740284" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Tubess_1_IF3270_PembelajaranMesin$main.coverage" NAME="main Coverage Results" MODIFIED="1743169977298" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Tubess_1_IF3270_PembelajaranMesin$ActivationFunction_test.coverage" NAME="ActivationFunction.test Coverage Results" MODIFIED="1743068749603" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Function" />
   </component>
 </project>

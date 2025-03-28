@@ -6,7 +6,7 @@ class InputLayer:
         self.nodes = []  
         self.alpha = None  
 
-    def forward(self, x):
+    def forward(self, x, useRMSprop):
         return x
 
     def backward(self, lr, delta):

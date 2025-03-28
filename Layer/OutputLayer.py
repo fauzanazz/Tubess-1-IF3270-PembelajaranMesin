@@ -44,6 +44,8 @@ class OutputLayer(Layer):
     def backward(self, lr, target):
         delta = self.derivative_loss(self.output, target)
 
+        delta = np.nan_to_num(delta, nan=0.0, posinf=1.0, neginf=-1.0)
+
         self.grad_weights = np.dot(delta.T, self.last_input) / self.last_input.shape[0]
         grad_b = np.mean(delta, axis=0)
 

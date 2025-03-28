@@ -11,20 +11,7 @@ from sklearn.model_selection import train_test_split
 from ArtificialNeuralNetwork import ArtificialNeuralNetwork
 from Layer import Layer, OutputLayer
 from Function import ActivationFunction, LossFunction
-from enums import InitializerType, RegularizationType
-
-
-def batch_generator(X, y, batch_size, shuffle=True):
-    n_samples = X.shape[0]
-    indices = np.arange(n_samples)
-
-    if shuffle:
-        np.random.shuffle(indices)
-
-    for start_idx in range(0, n_samples, batch_size):
-        end_idx = min(start_idx + batch_size, n_samples)
-        batch_indices = indices[start_idx:end_idx]
-        yield X[batch_indices], y[batch_indices]
+from enums import InitializerType
 
 if __name__ == "__main__":
     input_size = 784
@@ -89,7 +76,7 @@ if __name__ == "__main__":
         y=y_train,
         loss_function=LossFunction.categorical_cross_entropy,
         lr=learning_rate,
-        epochs=50,
+        epochs=100,
         batch_size=batch_size,
         verbose=True,
         validation_data=(X_test, y_test),

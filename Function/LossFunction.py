@@ -29,12 +29,9 @@ class LossFunction:
     @njit(cache=True, fastmath=True)
     def categorical_cross_entropy(y_pred, y_true, epsilon=1e-7):
         y_pred = np.clip(y_pred, epsilon, 1.0 - epsilon)
-
         if y_pred.ndim == 1:
-            # For 1D arrays (binary case)
             return -np.mean(y_true * np.log(y_pred) + (1 - y_true) * np.log(1 - y_pred))
         else:
-            # For 2D arrays (multi-class case)
             return -np.mean(np.sum(y_true * np.log(y_pred), axis=1))
 
     @staticmethod

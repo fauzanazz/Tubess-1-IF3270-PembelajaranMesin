@@ -10,7 +10,8 @@ class Layer:
                  activation, alpha=None, layer_name=None,
                  decay_rate=0.9, epsilon=1e-8,
                  regularizer: RegularizationType = None,
-                 optimizer="sgd", lr = 0.001, beta1=0.9, beta2=0.999):
+                 optimizer="sgd", lr = 0.001, beta1=0.9, beta2=0.999,
+                 gamma=None,):
         if layer_name is None:
             layer_name = f"layer_{id(self)}"
         self.layer_name = layer_name
@@ -41,6 +42,7 @@ class Layer:
         self.bias_rms = np.zeros_like(self.biases)
         self.decay_rate = decay_rate
         self.epsilon = epsilon
+        self.gamma = gamma
         # Regularization
         self.regularizer = Regularizer(regularizer) if regularizer is not None else Regularizer(RegularizationType.NONE)
 
@@ -72,13 +74,23 @@ class Layer:
         else:
             raise ValueError(f"Activation function {activation} is not supported")
 
-    def forward(self, x):
+    def forward(self, x, useRMSprop):
         self.last_input = x
         self.sum = np.dot(x, self.weights.T) + self.biases
-        if self.activation_func in (ActivationFunction.leaky_relu, ActivationFunction.prelu):
-            self.output = self.activation_func(self.sum, self.alpha)
+        if useRMSprop:
+            rms = np.sqrt(np.mean(self.sum ** 2, axis=-1, keepdims=True) + self.epsilon)
+            normed = self.sum / rms
+            if hasattr(self, 'gamma'):
+                normed = normed * self.gamma
+            if self.activation_func in (ActivationFunction.leaky_relu, ActivationFunction.prelu):
+                self.output = self.activation_func(normed, self.alpha)
+            else:
+                self.output = self.activation_func(normed)
         else:
-            self.output = self.activation_func(self.sum)
+            if self.activation_func in (ActivationFunction.leaky_relu, ActivationFunction.prelu):
+                self.output = self.activation_func(self.sum, self.alpha)
+            else:
+                self.output = self.activation_func(self.sum)
         return self.output
 
     def backward(self, lr, delta_next):

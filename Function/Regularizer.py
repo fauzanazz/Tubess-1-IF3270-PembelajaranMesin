@@ -17,10 +17,6 @@ class Regularizer:
         elif self.regularization_type == RegularizationType.L2:
             return self.lambda_reg * weights
 
-        elif self.regularization_type == RegularizationType.RMS:
-            rms_norm = np.sqrt(np.mean(weights ** 2) + self.epsilon)
-            return self.lambda_reg * weights / rms_norm
-
         elif self.regularization_type == RegularizationType.ELASTIC_NET:
             l1_grad = self.lambda_reg_l1 * np.sign(weights)
             l2_grad = self.lambda_reg_l2 * weights

@@ -43,9 +43,9 @@ class ArtificialNeuralNetwork:
                 batch_indices = batch_indices[:batch_size]
             yield X[batch_indices], y[batch_indices]
 
-    def forward(self, x):
+    def forward(self, x, useRMSProp):
         for layer in self.layers:
-            x = layer.forward(x)
+            x = layer.forward(x, useRMSProp)
         return x
 
     def backward(self, lr, target):
@@ -53,7 +53,7 @@ class ArtificialNeuralNetwork:
         for layer in reversed(self.layers[:-1]):
             delta = layer.backward(lr, delta)
 
-    def train(self, x, y, loss_function, lr, epochs, verbose=False, batch_size=32, shuffle=True, validation_data=None):
+    def train(self, x, y, loss_function, lr, epochs, verbose=False, batch_size=32, shuffle=True, validation_data=None, useRMSProp=False):
         if isinstance(self.layers[-1], OutputLayer):
             self.layers[-1].loss_funct = loss_function
 
@@ -76,7 +76,7 @@ class ArtificialNeuralNetwork:
             for x_batch, y_batch in self.batch_generator(x, y, batch_size, shuffle):
                 y_onehot = np.zeros((x_batch.shape[0], self.layers[-1].num_neurons))
                 y_onehot[np.arange(x_batch.shape[0]), y_batch] = 1
-                output = self.forward(x_batch)
+                output = self.forward(x_batch, useRMSProp)
                 loss = loss_function(y_onehot, output)
                 total_loss += loss
                 count += 1
@@ -92,7 +92,7 @@ class ArtificialNeuralNetwork:
             if has_validation:
                 y_val_onehot = np.zeros((x_val.shape[0], self.layers[-1].num_neurons))
                 y_val_onehot[np.arange(x_val.shape[0]), y_val] = 1
-                val_output = self.forward(x_val)
+                val_output = self.forward(x_val, useRMSProp)
                 val_loss = loss_function(y_val_onehot, val_output)
                 val_losses.append(val_loss)
 
@@ -106,7 +106,7 @@ class ArtificialNeuralNetwork:
         return (epoch_losses, val_losses) if has_validation else epoch_losses
 
     def predict(self, x):
-        return np.argmax(self.forward(x), axis=1)
+        return np.argmax(self.forward(x, False), axis=1)
 
     def evaluate(self, x, y):
         y_pred = self.predict(x)
