@@ -121,6 +121,9 @@ class ArtificialNeuralNetwork:
     def visualize_structure(self):
         return self.visualizer.plot_network_structure()
     
+    def visualize_weight_table(self):
+        self.visualizer.plot_layer_tables()
+    
     def visualize_weight_distribution(self, layer_indices):
         self.visualizer.plot_weight_distribution(layer_indices)
     

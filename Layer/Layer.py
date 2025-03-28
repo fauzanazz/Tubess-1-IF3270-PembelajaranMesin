@@ -13,6 +13,9 @@ class Layer:
         self.sum = None
         self.output = None
         self.alpha = None
+        
+        
+        self.num_neurons = num_neurons
 
         self.weights = Initializer.init_weights(
             weight_init=weight_init,

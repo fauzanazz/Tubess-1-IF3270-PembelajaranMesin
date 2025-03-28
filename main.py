@@ -3,6 +3,7 @@ sys.dont_write_bytecode = True
 
 # Import libraries
 import numpy as np
+from Layer.InputLayer import InputLayer
 from sklearn.datasets import fetch_openml
 from sklearn.model_selection import train_test_split
 
@@ -46,6 +47,7 @@ if __name__ == "__main__":
 
     ann = ArtificialNeuralNetwork(
         123,
+        InputLayer(input_size=input_size),
         Layer(
             weight_init=InitializerType.XAVIER,
             bias_init=InitializerType.ZERO,
@@ -67,7 +69,7 @@ if __name__ == "__main__":
             activation=ActivationFunction.prelu,
             alpha=0.45,
             layer_name=f"Hidden Layer 0"
-        ) for _ in range(hidden_layers)],
+        ) for _ in range(hidden_layers - 1)],
         OutputLayer(
             weight_init=InitializerType.XAVIER,
             bias_init=InitializerType.ZERO,
@@ -93,9 +95,12 @@ if __name__ == "__main__":
     )
 
     print(ann.evaluate(X_test, y_test))
+    
+    ann.visualize_structure()
+    ann.visualize_weight_table()
 
-    ann.visualize_weight_distribution([0, 1, 2])
-    ann.visualize_gradient_distribution([0, 1, 2])
+    ann.visualize_weight_distribution(list(range(1, hidden_layers + 2)))
+    ann.visualize_gradient_distribution(list(range(1, hidden_layers + 2)))
 
     # ann.save("ann_model.pkl")
     #
