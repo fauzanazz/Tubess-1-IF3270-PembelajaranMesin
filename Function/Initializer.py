@@ -25,9 +25,9 @@ class Initializer:
         if bias_init == InitializerType.ZERO:
             return np.zeros(num_neurons)
         elif bias_init == InitializerType.RANDOM_DIST_UNIFORM:
-            return np.ones(num_neurons) * np.random.uniform(param_1, param_2)
+            return np.random.uniform(param_1, param_2, num_neurons)
         elif bias_init == InitializerType.RANDOM_DIST_NORMAL:
-            return np.ones(num_neurons) * np.random.normal(param_1, param_2)
+            return np.random.normal(param_1, param_2, num_neurons)
         elif bias_init == InitializerType.XAVIER:
             return np.zeros(num_neurons)
         elif bias_init == InitializerType.HE:

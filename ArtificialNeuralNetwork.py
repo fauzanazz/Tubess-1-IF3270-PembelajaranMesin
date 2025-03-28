@@ -5,6 +5,7 @@ import pickle
 from ANNVisualizer import ANNVisualizer
 import os
 from tqdm.auto import tqdm
+from collections import defaultdict
 
 
 class ArtificialNeuralNetwork:
@@ -14,15 +15,32 @@ class ArtificialNeuralNetwork:
         self.visualizer = ANNVisualizer(self)
 
     def batch_generator(self, X, y, batch_size, shuffle=True):
-        n_samples = X.shape[0]
-        indices = np.arange(n_samples)
+        assert X.shape[0] == y.shape[0], "X and y must have the same number of samples"
+
+        indices_by_class = defaultdict(list)
+        for idx, label in enumerate(y):
+            indices_by_class[label].append(idx)
 
         if shuffle:
-            np.random.shuffle(indices)
+            for label in indices_by_class:
+                np.random.shuffle(indices_by_class[label])
 
-        for start_idx in range(0, n_samples, batch_size):
-            end_idx = min(start_idx + batch_size, n_samples)
-            batch_indices = indices[start_idx:end_idx]
+        n_samples = X.shape[0]
+        n_batches = int(np.ceil(n_samples / batch_size))
+
+        splits_by_class = {}
+        for label, indices in indices_by_class.items():
+            splits_by_class[label] = np.array_split(indices, n_batches)
+
+        for i in range(n_batches):
+            batch_indices = []
+            for label in splits_by_class:
+                if i < len(splits_by_class[label]):
+                    batch_indices.extend(splits_by_class[label][i])
+            if len(batch_indices) > batch_size:
+                if shuffle:
+                    np.random.shuffle(batch_indices)
+                batch_indices = batch_indices[:batch_size]
             yield X[batch_indices], y[batch_indices]
 
     def forward(self, x):
@@ -54,10 +72,8 @@ class ArtificialNeuralNetwork:
             total_loss = 0.0
             count = 0
 
-            train_loader = lambda: self.batch_generator(x, y, batch_size, shuffle)
-            data_batches = train_loader()
 
-            for x_batch, y_batch in data_batches:
+            for x_batch, y_batch in self.batch_generator(x, y, batch_size, shuffle):
                 y_onehot = np.zeros((x_batch.shape[0], self.layers[-1].num_neurons))
                 y_onehot[np.arange(x_batch.shape[0]), y_batch] = 1
                 output = self.forward(x_batch)
@@ -87,7 +103,7 @@ class ArtificialNeuralNetwork:
                 epochs_iter.set_postfix_str(status)
 
         print(f"Total training time: {training_time:.2f}s")
-        return epoch_losses, val_losses if has_validation else epoch_losses
+        return (epoch_losses, val_losses) if has_validation else epoch_losses
 
     def predict(self, x):
         return np.argmax(self.forward(x), axis=1)
@@ -113,9 +129,6 @@ class ArtificialNeuralNetwork:
         filename = "models/" + filename
         with open(filename, 'rb') as f:
             self.layers = pickle.load(f)
-            for layer in self.layers:
-                print(layer)
-                print(layer.alpha)
         print(f"Model loaded from {filename}")
 
     def visualize_structure(self):

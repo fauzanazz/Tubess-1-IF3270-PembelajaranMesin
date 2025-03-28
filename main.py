@@ -11,7 +11,8 @@ from sklearn.model_selection import train_test_split
 from ArtificialNeuralNetwork import ArtificialNeuralNetwork
 from Layer import Layer, OutputLayer
 from Function import ActivationFunction, LossFunction
-from enums import InitializerType
+from enums import InitializerType, RegularizationType
+
 
 def batch_generator(X, y, batch_size, shuffle=True):
     n_samples = X.shape[0]
@@ -30,7 +31,7 @@ if __name__ == "__main__":
     hidden_layers = 5
     hidden_size = 128
     output_size = 10
-    learning_rate = 0.001
+    learning_rate = 0.1
     param_1 = 0
     param_2 = 0.5
     batch_size = 64
@@ -57,7 +58,7 @@ if __name__ == "__main__":
             param_2=param_2,
             activation=ActivationFunction.prelu,
             alpha=0.45,
-            layer_name=f"Hidden Layer 0"
+            layer_name=f"Hidden Layer 0",
         ),
         *[Layer(
             weight_init=InitializerType.XAVIER,
@@ -68,7 +69,7 @@ if __name__ == "__main__":
             param_2=param_2,
             activation=ActivationFunction.prelu,
             alpha=0.45,
-            layer_name=f"Hidden Layer 0"
+            layer_name=f"Hidden Layer {_}",
         ) for _ in range(hidden_layers - 1)],
         OutputLayer(
             weight_init=InitializerType.XAVIER,
@@ -88,37 +89,12 @@ if __name__ == "__main__":
         y=y_train,
         loss_function=LossFunction.categorical_cross_entropy,
         lr=learning_rate,
-        epochs=40,
+        epochs=50,
         batch_size=batch_size,
         verbose=True,
         validation_data=(X_test, y_test),
     )
 
     print(ann.evaluate(X_test, y_test))
-    
-    ann.visualize_structure()
-    ann.visualize_weight_table()
 
-    ann.visualize_weight_distribution(list(range(1, hidden_layers + 2)))
-    ann.visualize_gradient_distribution(list(range(1, hidden_layers + 2)))
-
-    # ann.save("ann_model.pkl")
-    #
-    # new_model = ArtificialNeuralNetwork()
-    #
-    # new_model.load("ann_model.pkl")
-    #
-    # new_model.train(
-    #     train_loader,
-    #     loss_function=LossFunction.categorical_cross_entropy,
-    #     lr=0.005,
-    #     epochs=50,
-    #     verbose=1
-    # )
-    #
-    # new_model.test(test_loader)
-    # fig = new_model.visualize_structure()
-    # new_model.visualize_weight_distribution([0, 1, 2])
-    # new_model.visualize_gradient_distribution([0, 1, 2])
-
-
+    ann.save("model.pkl")
