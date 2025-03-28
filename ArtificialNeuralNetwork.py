@@ -1,5 +1,6 @@
 import numpy as np
 import time
+
 from Layer import OutputLayer
 import pickle
 from ANNVisualizer import ANNVisualizer

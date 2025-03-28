@@ -1,5 +1,4 @@
 from Function import Initializer
-from Function.AdaptiveOptimizer import AdaptiveOptimizer
 from Function.Regularizer import Regularizer
 from enums import RegularizationType
 from Function.ActivationFunction import ActivationFunction
@@ -8,9 +7,8 @@ import numpy as np
 class Layer:
     def __init__(self, weight_init, bias_init, param_1, param_2, num_neurons, input_size,
                  activation, alpha=None, layer_name=None,
-                 decay_rate=0.9, epsilon=1e-8,
+                epsilon=1e-8,
                  regularizer: RegularizationType = None,
-                 optimizer="sgd", lr = 0.001, beta1=0.9, beta2=0.999,
                  gamma=None,):
         if layer_name is None:
             layer_name = f"layer_{id(self)}"
@@ -38,22 +36,11 @@ class Layer:
         self.last_input = None
 
         # RMS
-        self.weight_rms = np.zeros_like(self.weights)
-        self.bias_rms = np.zeros_like(self.biases)
-        self.decay_rate = decay_rate
         self.epsilon = epsilon
         self.gamma = gamma
+
         # Regularization
         self.regularizer = Regularizer(regularizer) if regularizer is not None else Regularizer(RegularizationType.NONE)
-
-        # Optimizer
-        self.optimizer = AdaptiveOptimizer(
-            method=optimizer,
-            lr=lr,
-            beta1=beta1,
-            beta2=beta2,
-            epsilon=epsilon,
-        )
 
         if activation == ActivationFunction.linear:
             self.derivative_activation = ActivationFunction.derivative_linear
@@ -74,23 +61,51 @@ class Layer:
         else:
             raise ValueError(f"Activation function {activation} is not supported")
 
+    def _safe_activation(self, x, activation_func, alpha=None):
+        try:
+            if alpha is not None:
+                output = activation_func(x, alpha)
+            else:
+                output = activation_func(x)
+
+            output = np.nan_to_num(output, nan=0.0, posinf=np.finfo(float).max,neginf=np.finfo(float).min)
+            output = np.clip(output,-1e6,1e6)
+            return output
+        except Exception as e:
+            print(f"Error in activation: {e}")
+            return np.zeros_like(x)
+
+    def _gradient_clipping(self, gradients, max_norm=1.0):
+        grad_norm = np.linalg.norm(gradients)
+        if grad_norm > max_norm:
+            gradients = gradients * (max_norm / grad_norm)
+        return gradients
+
     def forward(self, x, useRMSprop):
         self.last_input = x
-        self.sum = np.dot(x, self.weights.T) + self.biases
+        self.sum = np.nan_to_num(
+            np.dot(x, self.weights.T) + self.biases,
+            nan=0.0,
+            posinf=1e6,
+            neginf=-1e6
+        )
         if useRMSprop:
             rms = np.sqrt(np.mean(self.sum ** 2, axis=-1, keepdims=True) + self.epsilon)
-            normed = self.sum / rms
-            if hasattr(self, 'gamma') and self.gamma is not None:
-                normed = normed * self.gamma
+            normed = self.sum / (rms + self.epsilon)
+
+            if self.gamma is not None:
+                normed *= self.gamma
+
             if self.activation_func in (ActivationFunction.leaky_relu, ActivationFunction.prelu):
-                self.output = self.activation_func(normed, self.alpha)
+                self.output = self._safe_activation(normed, self.activation_func, self.alpha)
             else:
-                self.output = self.activation_func(normed)
+                self.output = self._safe_activation(normed, self.activation_func)
         else:
             if self.activation_func in (ActivationFunction.leaky_relu, ActivationFunction.prelu):
-                self.output = self.activation_func(self.sum, self.alpha)
+                self.output = self._safe_activation(self.sum, self.activation_func, self.alpha)
             else:
-                self.output = self.activation_func(self.sum)
+                self.output = self._safe_activation(self.sum, self.activation_func)
+
         return self.output
 
     def backward(self, lr, delta_next):
@@ -110,12 +125,8 @@ class Layer:
         self.grad_weights += reg_gradient
 
         delta_prev = np.dot(delta, self.weights)
-        self.weights, self.biases = self.optimizer.update(
-            layer_name=self.layer_name,
-            weights=self.weights,
-            biases=self.biases,
-            grad_weights=self.grad_weights,
-            grad_biases=grad_b
-        )
+
+        self.weights -= lr * self.grad_weights
+        self.biases -= lr * grad_b
 
         return delta_prev

@@ -76,7 +76,7 @@ if __name__ == "__main__":
         y=y_train,
         loss_function=LossFunction.categorical_cross_entropy,
         lr=learning_rate,
-        epochs=100,
+        epochs=50,
         batch_size=batch_size,
         verbose=True,
         validation_data=(X_test, y_test),

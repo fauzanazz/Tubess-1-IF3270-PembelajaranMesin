@@ -8,10 +8,8 @@ class OutputLayer(Layer):
     def __init__(self, weight_init: InitializerType, bias_init: InitializerType, 
                 input_size, num_neurons, param_1, param_2, 
                 activation=ActivationFunction.linear, layer_name=None, loss_funct = None,
-                decay_rate=0.9, epsilon=1e-8,
-                regularizer: RegularizationType = None,
-                 optimizer="sgd", lr=0.001, beta1=0.9, beta2=0.999
-                 ):
+                epsilon=1e-8,
+                regularizer: RegularizationType = None):
         super().__init__(
             weight_init=weight_init,
             bias_init=bias_init,
@@ -21,12 +19,7 @@ class OutputLayer(Layer):
             param_2=param_2,
             activation=activation,
             layer_name=layer_name,
-            decay_rate=decay_rate,
             regularizer=regularizer,
-            optimizer=optimizer,
-            lr=lr,
-            beta1=beta1,
-            beta2=beta2,
             epsilon=epsilon,
         )
         self.num_neurons = num_neurons
@@ -53,13 +46,8 @@ class OutputLayer(Layer):
         self.grad_weights += reg_gradient
 
         delta_prev = np.dot(delta, self.weights)
-        self.weights, self.biases = self.optimizer.update(
-            layer_name=self.layer_name,
-            weights=self.weights,
-            biases=self.biases,
-            grad_weights=self.grad_weights,
-            grad_biases=grad_b
-        )
+        self.weights -= lr * self.grad_weights
+        self.biases -= lr * grad_b
 
         return delta_prev
 

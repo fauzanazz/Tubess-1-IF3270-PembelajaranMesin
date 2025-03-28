@@ -6,9 +6,14 @@
   <component name="ChangeListManager">
     <list default="true" id="675fe126-bdbb-4d78-b07c-dcbdd927e414" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ArtificialNeuralNetwork.py" beforeDir="false" afterPath="$PROJECT_DIR$/ArtificialNeuralNetwork.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Function/AdaptiveOptimizer.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Function/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/Function/__init__.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Layer/Layer.py" beforeDir="false" afterPath="$PROJECT_DIR$/Layer/Layer.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Layer/OutputLayer.py" beforeDir="false" afterPath="$PROJECT_DIR$/Layer/OutputLayer.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/ann_model.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/models/ann_model.pkl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/simple.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/simple.ipynb" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -37,6 +42,9 @@
     &quot;accountId&quot;: &quot;31c15140-e2ec-4c24-913d-051a09f42b4a&quot;
   }
 }</component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="ProjectErrors" />
+  </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 2
 }</component>
@@ -67,6 +75,7 @@
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
+    "run.code.analysis.last.selected.profile": "pProject Default",
     "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
     "vue.rearranger.settings.migration": "true"
   }
@@ -236,7 +245,7 @@
     <SUITE FILE_PATH="coverage/Tubess_1_IF3270_PembelajaranMesin$ANNVisualizer.coverage" NAME="ANNVisualizer Coverage Results" MODIFIED="1743078159671" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Tubess_1_IF3270_PembelajaranMesin$LostFunction_test.coverage" NAME="LostFunction.test Coverage Results" MODIFIED="1743168713489" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Function" />
     <SUITE FILE_PATH="coverage/Tubess_1_IF3270_PembelajaranMesin$Layer.coverage" NAME="Layer Coverage Results" MODIFIED="1743150458287" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Layer" />
-    <SUITE FILE_PATH="coverage/Tubess_1_IF3270_PembelajaranMesin$main.coverage" NAME="main Coverage Results" MODIFIED="1743172776251" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Tubess_1_IF3270_PembelajaranMesin$main.coverage" NAME="main Coverage Results" MODIFIED="1743191870871" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Tubess_1_IF3270_PembelajaranMesin$ActivationFunction_test.coverage" NAME="ActivationFunction.test Coverage Results" MODIFIED="1743068749603" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Function" />
   </component>
 </project>
