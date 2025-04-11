@@ -1,6 +1,38 @@
-# Binary Image Classification (Cat vs Dog)
+# 🧠 Feedforward Neural Network from Scratch
 
-Repository ini berisi proyek klasifikasi gambar biner (kucing vs anjing) menggunakan Convolutional Neural Network (CNN). Model dilatih menggunakan dataset dari Kaggle dan diuji dengan berbagai konfigurasi arsitektur, termasuk penggunaan model AlexNet dan transfer learning dari pretrained CNN seperti MobileNetV2.
+This repository contains a Feedforward Neural Network (FFNN) built **from scratch** using Python and NumPy. The project was developed as part of **Tugas Besar 1** for the **IF3270 Machine Learning** course at Institut Teknologi Bandung.
+
+## 📌 Features
+
+- ✅ Fully customizable neural network architecture
+- ✅ Supports various activation functions:
+  - Linear
+  - ReLU
+  - Sigmoid
+  - Tanh
+  - Softmax
+- ✅ Multiple loss functions:
+  - Mean Squared Error (MSE)
+  - Binary Cross Entropy
+  - Categorical Cross Entropy
+- ✅ Weight initialization methods:
+  - Zero Initialization
+  - Random Uniform
+  - Random Normal
+- ✅ L1 and L2 Regularization
+- ✅ Batch Gradient Descent
+- ✅ Training/validation visualization (loss, weight/gradient distributions)
+- ✅ Model saving and loading
+- ✅ Evaluation and comparison with `sklearn`'s MLP
+
+## 🧪 Experiments
+
+The network is tested on the **MNIST** dataset using `fetch_openml`. Performance and training insights are documented in the report.
+
+Visualizations include:
+- Network structure with weight and gradient flow
+- Loss curve per epoch
+- Distribution plots of weights and gradients per layer
 
 
 ## ⚙️ Setup and Run the Program
