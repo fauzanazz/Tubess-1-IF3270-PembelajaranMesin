@@ -85,3 +85,11 @@ if __name__ == "__main__":
     print(ann.evaluate(X_test, y_test))
 
     ann.save("model.pkl")
+    
+    ann.visualize_structure()
+    
+    ann.visualize_weight_table()
+    
+    ann.visualize_weight_distribution([0, 1])
+    
+    ann.visualize_gradient_distribution([0, 1])
